@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "generator-langium": "^0.5.0",
+    "yo": "^4.3.1"
+  }
+}
