@@ -7,7 +7,9 @@ import io.github.mosser.arduinoml.kernel.App;
 import io.github.mosser.arduinoml.kernel.behavioral.Action;
 import io.github.mosser.arduinoml.kernel.behavioral.State;
 import io.github.mosser.arduinoml.kernel.behavioral.Transition;
+import io.github.mosser.arduinoml.kernel.behavioral.TransitionCondition;
 import io.github.mosser.arduinoml.kernel.structural.Actuator;
+import io.github.mosser.arduinoml.kernel.structural.CONNECTOR;
 import io.github.mosser.arduinoml.kernel.structural.SIGNAL;
 import io.github.mosser.arduinoml.kernel.structural.Sensor;
 
@@ -40,6 +42,8 @@ public class ModelBuilder extends ArduinomlBaseListener {
     private class Binding { // used to support state resolution for transitions
         String to; // name of the next state, as its instance might not have been compiled yet
         Sensor trigger;
+        Sensor trigger2;
+        CONNECTOR connector;
         SIGNAL value;
     }
 
@@ -58,11 +62,22 @@ public class ModelBuilder extends ArduinomlBaseListener {
     @Override public void exitRoot(ArduinomlParser.RootContext ctx) {
         // Resolving states in transitions
         bindings.forEach((key, binding) ->  {
-            Transition t = new Transition();
-            t.setSensor(binding.trigger);
-            t.setValue(binding.value);
-            t.setNext(states.get(binding.to));
-            states.get(key).setTransition(t);
+            if(binding.trigger2 != null) {
+                TransitionCondition t = new TransitionCondition();
+                t.setSensor(binding.trigger);
+                t.setSensor2(binding.trigger2);
+                t.setValue(binding.value);
+                t.setConnector(binding.connector);
+                t.setNext(states.get(binding.to));
+                states.get(key).setTransition(t);
+            } else {
+                Transition t = new Transition();
+                t.setSensor(binding.trigger);
+                t.setValue(binding.value);
+                t.setNext(states.get(binding.to));
+                states.get(key).setTransition(t);
+            }
+
         });
         this.built = true;
     }
@@ -122,6 +137,18 @@ public class ModelBuilder extends ArduinomlBaseListener {
         Binding toBeResolvedLater = new Binding();
         toBeResolvedLater.to      = ctx.next.getText();
         toBeResolvedLater.trigger = sensors.get(ctx.trigger.getText());
+        toBeResolvedLater.value   = SIGNAL.valueOf(ctx.value.getText());
+        bindings.put(currentState.getName(), toBeResolvedLater);
+    }
+
+    @Override
+    public void enterTransitionCondition(ArduinomlParser.TransitionConditionContext ctx) {
+        // Creating a placeholder as the next state might not have been compiled yet.
+        Binding toBeResolvedLater = new Binding();
+        toBeResolvedLater.to      = ctx.next.getText();
+        toBeResolvedLater.trigger = sensors.get(ctx.trigger1.getText());
+        toBeResolvedLater.trigger2 = sensors.get(ctx.trigger2.getText());
+        toBeResolvedLater.connector = CONNECTOR.valueOf(ctx.connector.getText());
         toBeResolvedLater.value   = SIGNAL.valueOf(ctx.value.getText());
         bindings.put(currentState.getName(), toBeResolvedLater);
     }
