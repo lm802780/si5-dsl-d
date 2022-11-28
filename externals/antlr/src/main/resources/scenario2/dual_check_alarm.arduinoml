@@ -1,4 +1,4 @@
-application redButton
+application dualCheckAlarm
 
 # Declaring bricks
 sensor buttonOne: 9
