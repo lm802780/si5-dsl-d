@@ -27,8 +27,14 @@ thirdStep {
 fourthStep {
     led <= HIGH
     buzzer <= LOW
+    button is HIGH => fifthStep
+}
+
+fifthStep {
+    led buzzer <= LOW
     button is LOW => off
 }
+
 
 -> off {
     led buzzer <= LOW
