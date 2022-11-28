@@ -6,10 +6,8 @@ import io.github.mosser.arduinoml.kernel.structural.Actuator;
 import io.github.mosser.arduinoml.kernel.structural.SIGNAL;
 
 public class Action implements Visitable {
-
 	private SIGNAL value;
 	private Actuator actuator;
-
 
 	public SIGNAL getValue() {
 		return value;
@@ -28,7 +26,7 @@ public class Action implements Visitable {
 	}
 
 	@Override
-	public void accept(Visitor visitor) {
+	public void accept(Visitor<StringBuffer> visitor) {
 		visitor.visit(this);
 	}
 }
