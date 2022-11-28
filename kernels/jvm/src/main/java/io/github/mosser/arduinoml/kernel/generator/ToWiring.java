@@ -116,7 +116,7 @@ public class ToWiring extends Visitor<StringBuffer> {
             w(String.format("\t\t\tif( digitalRead(%d) == %s && %sBounceGuard) {%n",
                     transition.getSensor().getPin(), transition.getValue(), sensorName));
             w(String.format("\t\t\t\t%sLastDebounceTime = millis();%n", sensorName));
-            w("\t\t\t\tcurrentState = " + transition.getNext().getName() + ";%n");
+            w("\t\t\t\tcurrentState = " + transition.getNext().getName() + ";\n");
             w("\t\t\t}\n");
         }
     }
