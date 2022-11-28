@@ -2,6 +2,7 @@ package io.github.mosser.arduinoml.kernel.generator;
 
 import io.github.mosser.arduinoml.kernel.App;
 import io.github.mosser.arduinoml.kernel.behavioral.Action;
+import io.github.mosser.arduinoml.kernel.behavioral.Sleep;
 import io.github.mosser.arduinoml.kernel.behavioral.State;
 import io.github.mosser.arduinoml.kernel.behavioral.Transition;
 import io.github.mosser.arduinoml.kernel.behavioral.TransitionCondition;
@@ -101,7 +102,6 @@ public class ToWiring extends Visitor<StringBuffer> {
                 w("\t\tbreak;\n");
             }
         }
-
     }
 
     @Override
@@ -122,7 +122,6 @@ public class ToWiring extends Visitor<StringBuffer> {
     }
 
     @Override
-
     public void visit(TransitionCondition transitionCondition) {
         if (context.get("pass") == PASS.ONE) {
             return;
@@ -147,6 +146,16 @@ public class ToWiring extends Visitor<StringBuffer> {
         }
         if (context.get("pass") == PASS.TWO) {
             w(String.format("\t\t\tdigitalWrite(%d,%s);%n", action.getActuator().getPin(), action.getValue()));
+        }
+    }
+
+    @Override
+    public void visit(Sleep sleep) {
+        if (context.get("pass") == PASS.ONE) {
+            return;
+        }
+        if (context.get("pass") == PASS.TWO) {
+            w(String.format("\t\t\tdelay(%d);%n", sleep.getTime()));
         }
     }
 

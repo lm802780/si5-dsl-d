@@ -161,6 +161,13 @@ public class ModelBuilder extends ArduinomlBaseListener {
     }
 
     @Override
+    public void enterSleep(ArduinomlParser.SleepContext ctx) {
+        Binding toBeResolvedLater = new Binding();
+        toBeResolvedLater.to = ctx.time.getText();
+        bindings.put(currentState.getName(), toBeResolvedLater);
+    }
+
+    @Override
     public void enterInitial(ArduinomlParser.InitialContext ctx) {
         this.theApp.setInitial(this.currentState);
     }
