@@ -8,13 +8,10 @@ actuator buzzer: 11
 # Declaring states
 firstStep {
     buzzer <= HIGH
-    led <= LOW
     button is LOW => secondStep
 }
 
 secondStep {
-    buzzer <= HIGH
-    led <= LOW
     button is HIGH => thirdStep
 }
 
@@ -25,13 +22,11 @@ thirdStep {
 }
 
 fourthStep {
-    led <= HIGH
-    buzzer <= LOW
     button is HIGH => fifthStep
 }
 
 fifthStep {
-    led buzzer <= LOW
+    led <= LOW
     button is LOW => off
 }
 
