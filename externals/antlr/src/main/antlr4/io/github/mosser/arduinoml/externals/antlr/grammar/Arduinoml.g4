@@ -18,8 +18,9 @@ states          :   state+;
     state       :   initial? name=IDENTIFIER '{'  action* (transition | transitionCondition) '}';
     action      :   actionable+ '<=' value=SIGNAL;
         actionable: receiver=IDENTIFIER;
-    transition  :   trigger=IDENTIFIER 'is' value=SIGNAL '=>' next=IDENTIFIER ;
-    transitionCondition  :   trigger1=IDENTIFIER connector=CONNECTOR trigger2=IDENTIFIER 'are' value=SIGNAL '=>' next=IDENTIFIER ;
+    transition  :   trigger=IDENTIFIER 'is' value=SIGNAL '=>' next=IDENTIFIER;
+    transitionCondition  :   trigger1=IDENTIFIER 'is' value=SIGNAL(condition)* '=>' next=IDENTIFIER;
+        condition: connector=CONNECTOR trigger=IDENTIFIER 'is' value=SIGNAL ;
     initial     :   '->';
 
 /*****************
