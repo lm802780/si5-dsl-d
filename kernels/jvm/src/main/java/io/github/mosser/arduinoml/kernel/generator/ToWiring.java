@@ -1,8 +1,8 @@
 package io.github.mosser.arduinoml.kernel.generator;
 
 import io.github.mosser.arduinoml.kernel.App;
-import io.github.mosser.arduinoml.kernel.behavioral.*;
 import io.github.mosser.arduinoml.kernel.behavioral.Action;
+import io.github.mosser.arduinoml.kernel.behavioral.Condition;
 import io.github.mosser.arduinoml.kernel.behavioral.Sleep;
 import io.github.mosser.arduinoml.kernel.behavioral.State;
 import io.github.mosser.arduinoml.kernel.behavioral.Transition;
@@ -133,9 +133,9 @@ public class ToWiring extends Visitor<StringBuffer> {
             w(String.format("\t\t\t%sBounceGuard = millis() - %sLastDebounceTime > debounce;%n", transitionCondition.getSensor().getName(), transitionCondition.getSensor().getName()));
             conditionBuilder.append("\t\t\tif(");
             conditionBuilder.append(String.format("(digitalRead(%d) == %s && %sBounceGuard)", transitionCondition.getSensor().getPin(), transitionCondition.getValue().name(), sensorName));
-            for(Condition condition :transitionCondition.getConditions()) {
+            for (Condition condition : transitionCondition.getConditions()) {
                 w(String.format("\t\t\t%sBounceGuard = millis() - %sLastDebounceTime > debounce;%n", condition.getSensor().getName(), condition.getSensor().getName()));
-                conditionBuilder.append(String.format(" %s (digitalRead(%d) == %s && %sBounceGuard)",condition.getConnector().getCondition(), condition.getSensor().getPin(), condition.getValue(), condition.getSensor().getName()));
+                conditionBuilder.append(String.format(" %s (digitalRead(%d) == %s && %sBounceGuard)", condition.getConnector().getCondition(), condition.getSensor().getPin(), condition.getValue(), condition.getSensor().getName()));
             }
             conditionBuilder.append(") {\n");
             w(conditionBuilder.toString());

@@ -3,7 +3,10 @@ package io.github.mosser.arduinoml.externals.antlr;
 import io.github.mosser.arduinoml.externals.antlr.grammar.ArduinomlBaseListener;
 import io.github.mosser.arduinoml.externals.antlr.grammar.ArduinomlParser;
 import io.github.mosser.arduinoml.kernel.App;
-import io.github.mosser.arduinoml.kernel.behavioral.*;
+import io.github.mosser.arduinoml.kernel.behavioral.Action;
+import io.github.mosser.arduinoml.kernel.behavioral.Condition;
+import io.github.mosser.arduinoml.kernel.behavioral.State;
+import io.github.mosser.arduinoml.kernel.behavioral.TransitionCondition;
 import io.github.mosser.arduinoml.kernel.structural.Actuator;
 import io.github.mosser.arduinoml.kernel.structural.CONNECTOR;
 import io.github.mosser.arduinoml.kernel.structural.SIGNAL;
@@ -68,12 +71,12 @@ public class ModelBuilder extends ArduinomlBaseListener {
     public void exitRoot(ArduinomlParser.RootContext ctx) {
         // Resolving states in transitions
         bindings.forEach((key, binding) -> {
-                TransitionCondition t = new TransitionCondition();
-                t.setSensor(binding.trigger);
-                t.setConditions(binding.conditions);
-                t.setValue(binding.value);
-                t.setNext(states.get(binding.to));
-                states.get(key).setTransition(t);
+            TransitionCondition t = new TransitionCondition();
+            t.setSensor(binding.trigger);
+            t.setConditions(binding.conditions);
+            t.setValue(binding.value);
+            t.setNext(states.get(binding.to));
+            states.get(key).setTransition(t);
         });
         this.built = true;
     }
@@ -135,6 +138,7 @@ public class ModelBuilder extends ArduinomlBaseListener {
         toBeResolvedLater.value = SIGNAL.valueOf(ctx.value.getText());
         bindings.put(currentState.getName(), toBeResolvedLater);
     }
+
     @Override
     public void enterTransitionCondition(ArduinomlParser.TransitionConditionContext ctx) {
         // Creating a placeholder as the next state might not have been compiled yet.
