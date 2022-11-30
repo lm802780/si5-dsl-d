@@ -10,7 +10,6 @@ public class Transition implements Visitable {
     private Sensor sensor;
     private SIGNAL value;
 
-
     public State getNext() {
         return next;
     }
