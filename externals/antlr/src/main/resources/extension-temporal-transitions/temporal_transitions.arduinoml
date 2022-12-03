@@ -6,14 +6,12 @@ actuator ledOne: 12
 
 # Declaring states
 -> off {
-    ledOne buzzer <= LOW
+    ledOne <= LOW
     button is HIGH => on
 }
 
 on {
     ledOne <= HIGH
-    sleep 80
-    ledOne <= LOW
-    button is HIGH => on
+    800 ms => off
 }
 

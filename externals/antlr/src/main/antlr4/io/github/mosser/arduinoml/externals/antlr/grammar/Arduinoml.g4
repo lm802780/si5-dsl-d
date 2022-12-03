@@ -15,13 +15,13 @@ bricks          :   (sensor|actuator)+;
     location    :   id=IDENTIFIER ':' port=PORT_NUMBER;
 
 states          :   state+;
-    state       :   initial? name=IDENTIFIER '{'  (action* sleep* action*) (transition | transitionCondition) '}';
+    state       :   initial? name=IDENTIFIER '{'  (action* action*) (transition | transitionSleep | transitionCondition) '}';
     action      :   actionable+ '<=' value=SIGNAL;
         actionable: receiver=IDENTIFIER;
-    sleep       :   'sleep' time=INTEGER;
     transition  :   trigger=IDENTIFIER 'is' value=SIGNAL '=>' next=IDENTIFIER;
-    transitionCondition  :   trigger1=IDENTIFIER 'is' value=SIGNAL(condition)* '=>' next=IDENTIFIER;
+    transitionCondition  :  trigger1=IDENTIFIER 'is' value=SIGNAL(condition)* '=>' next=IDENTIFIER;
         condition: connector=CONNECTOR trigger=IDENTIFIER 'is' value=SIGNAL ;
+    transitionSleep      :  timeInMillis=INTEGER 'ms' '=>' next=IDENTIFIER;
     initial     :   '->';
 
 /*****************

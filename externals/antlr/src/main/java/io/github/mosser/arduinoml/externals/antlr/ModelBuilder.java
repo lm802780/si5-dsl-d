@@ -7,6 +7,7 @@ import io.github.mosser.arduinoml.kernel.behavioral.Action;
 import io.github.mosser.arduinoml.kernel.behavioral.Condition;
 import io.github.mosser.arduinoml.kernel.behavioral.State;
 import io.github.mosser.arduinoml.kernel.behavioral.TransitionCondition;
+import io.github.mosser.arduinoml.kernel.behavioral.TransitionSleep;
 import io.github.mosser.arduinoml.kernel.structural.Actuator;
 import io.github.mosser.arduinoml.kernel.structural.CONNECTOR;
 import io.github.mosser.arduinoml.kernel.structural.SIGNAL;
@@ -23,7 +24,7 @@ public class ModelBuilder extends ArduinomlBaseListener {
      ** Business Logic **
      ********************/
 
-    private App theApp = null;
+    private App theApp;
     private boolean built = false;
 
     public App retrieve() {
@@ -49,13 +50,14 @@ public class ModelBuilder extends ArduinomlBaseListener {
         /**
          * Name of the next state, as its instance might not have been compiled yet.
          */
-        String to;
-        Sensor trigger;
-        List<Condition> conditions = new ArrayList<>();
-        SIGNAL value;
+        protected String to;
+        protected Sensor trigger;
+        protected List<Condition> conditions = new ArrayList<>();
+        protected SIGNAL value;
+        protected Long timeInMillis;
     }
 
-    private State currentState = null;
+    private State currentState;
 
     /**************************
      ** Listening mechanisms **
@@ -71,12 +73,19 @@ public class ModelBuilder extends ArduinomlBaseListener {
     public void exitRoot(ArduinomlParser.RootContext ctx) {
         // Resolving states in transitions
         bindings.forEach((key, binding) -> {
-            TransitionCondition t = new TransitionCondition();
-            t.setSensor(binding.trigger);
-            t.setConditions(binding.conditions);
-            t.setValue(binding.value);
-            t.setNext(states.get(binding.to));
-            states.get(key).setTransition(t);
+            if (binding.timeInMillis != null) {
+                TransitionSleep t = new TransitionSleep();
+                t.setTimeInMillis(binding.timeInMillis);
+                t.setNext(states.get(binding.to));
+                states.get(key).setTransition(t);
+            } else {
+                TransitionCondition t = new TransitionCondition();
+                t.setSensor(binding.trigger);
+                t.setConditions(binding.conditions);
+                t.setValue(binding.value);
+                t.setNext(states.get(binding.to));
+                states.get(key).setTransition(t);
+            }
         });
         this.built = true;
     }
@@ -128,7 +137,6 @@ public class ModelBuilder extends ArduinomlBaseListener {
         });
     }
 
-
     @Override
     public void enterTransition(ArduinomlParser.TransitionContext ctx) {
         // Creating a placeholder as the next state might not have been compiled yet.
@@ -158,9 +166,11 @@ public class ModelBuilder extends ArduinomlBaseListener {
     }
 
     @Override
-    public void enterSleep(ArduinomlParser.SleepContext ctx) {
+    public void enterTransitionSleep(ArduinomlParser.TransitionSleepContext ctx) {
+        // Creating a placeholder as the next state might not have been compiled yet.
         Binding toBeResolvedLater = new Binding();
-        toBeResolvedLater.to = ctx.time.getText();
+        toBeResolvedLater.to = ctx.next.getText();
+        toBeResolvedLater.timeInMillis = Long.valueOf(ctx.timeInMillis.getText());
         bindings.put(currentState.getName(), toBeResolvedLater);
     }
 
