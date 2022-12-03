@@ -24,5 +24,4 @@ public abstract class Brick implements NamedElement, Visitable {
     public void setName(String name) {
         this.name = name;
     }
-
 }

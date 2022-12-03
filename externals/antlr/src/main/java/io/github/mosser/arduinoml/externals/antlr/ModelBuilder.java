@@ -4,6 +4,8 @@ import io.github.mosser.arduinoml.externals.antlr.grammar.ArduinomlBaseListener;
 import io.github.mosser.arduinoml.externals.antlr.grammar.ArduinomlParser;
 import io.github.mosser.arduinoml.kernel.App;
 import io.github.mosser.arduinoml.kernel.behavioral.*;
+import io.github.mosser.arduinoml.kernel.behavioral.condition.AnalogCondition;
+import io.github.mosser.arduinoml.kernel.behavioral.condition.DigitalCondition;
 import io.github.mosser.arduinoml.kernel.structural.Actuator;
 import io.github.mosser.arduinoml.kernel.structural.CONNECTOR;
 import io.github.mosser.arduinoml.kernel.structural.SIGNAL;
@@ -48,8 +50,8 @@ public class ModelBuilder extends ArduinomlBaseListener {
          */
         String to;
         Sensor trigger;
-        List<Condition> conditions = new ArrayList<>();
-        SIGNAL value;
+        List<DigitalCondition> digitalConditions = new ArrayList<>();
+        List<AnalogCondition> analogConditions = new ArrayList<>();
     }
 
     private State currentState = null;
@@ -68,12 +70,18 @@ public class ModelBuilder extends ArduinomlBaseListener {
     public void exitRoot(ArduinomlParser.RootContext ctx) {
         // Resolving states in transitions
         bindings.forEach((key, binding) -> {
-                TransitionCondition t = new TransitionCondition();
-                t.setSensor(binding.trigger);
-                t.setConditions(binding.conditions);
-                t.setValue(binding.value);
+            if(!binding.digitalConditions.isEmpty()) {
+                DigitalTransition t = new DigitalTransition();
+                t.setConditions(binding.digitalConditions);
                 t.setNext(states.get(binding.to));
                 states.get(key).setTransition(t);
+            } else {
+                AnalogTransition t = new AnalogTransition();
+                t.setConditions(binding.analogConditions);
+                t.setNext(states.get(binding.to));
+                states.get(key).setTransition(t);
+            }
+
         });
         this.built = true;
     }
@@ -85,6 +93,15 @@ public class ModelBuilder extends ArduinomlBaseListener {
 
     @Override
     public void enterSensor(ArduinomlParser.SensorContext ctx) {
+        Sensor sensor = new Sensor();
+        sensor.setName(ctx.location().id.getText());
+        sensor.setPin(Integer.parseInt(ctx.location().port.getText()));
+        this.theApp.getBricks().add(sensor);
+        sensors.put(sensor.getName(), sensor);
+    }
+
+    @Override
+    public void enterAnalogSensor(ArduinomlParser.AnalogSensorContext ctx) {
         Sensor sensor = new Sensor();
         sensor.setName(ctx.location().id.getText());
         sensor.setPin(Integer.parseInt(ctx.location().port.getText()));
@@ -126,30 +143,41 @@ public class ModelBuilder extends ArduinomlBaseListener {
     }
 
 
+
     @Override
-    public void enterTransition(ArduinomlParser.TransitionContext ctx) {
-        // Creating a placeholder as the next state might not have been compiled yet.
-        Binding toBeResolvedLater = new Binding();
-        toBeResolvedLater.to = ctx.next.getText();
-        toBeResolvedLater.trigger = sensors.get(ctx.trigger.getText());
-        toBeResolvedLater.value = SIGNAL.valueOf(ctx.value.getText());
-        bindings.put(currentState.getName(), toBeResolvedLater);
-    }
-    @Override
-    public void enterTransitionCondition(ArduinomlParser.TransitionConditionContext ctx) {
+    public void enterDigitalTransition(ArduinomlParser.DigitalTransitionContext ctx) {
         // Creating a placeholder as the next state might not have been compiled yet.
         Binding toBeResolvedLater = new Binding();
         toBeResolvedLater.to = ctx.next.getText();
         ctx.condition().forEach(conditionContext -> {
-            Condition condition = new Condition();
-            condition.setConnector(CONNECTOR.valueOf(conditionContext.connector.getText()));
+            DigitalCondition condition = new DigitalCondition();
+            if(conditionContext.connector != null) {
+                condition.setConnector(CONNECTOR.valueOf(conditionContext.connector.getText()));
+            }
+
             condition.setSensor(sensors.get(conditionContext.trigger.getText()));
             condition.setValue(SIGNAL.valueOf(conditionContext.value.getText()));
-            toBeResolvedLater.conditions.add(condition);
+            toBeResolvedLater.digitalConditions.add(condition);
         });
         toBeResolvedLater.to = ctx.next.getText();
-        toBeResolvedLater.trigger = sensors.get(ctx.trigger1.getText());
-        toBeResolvedLater.value = SIGNAL.valueOf(ctx.value.getText());
+        bindings.put(currentState.getName(), toBeResolvedLater);
+    }
+
+    @Override
+    public void enterAnalogTransition(ArduinomlParser.AnalogTransitionContext ctx) {
+        // Creating a placeholder as the next state might not have been compiled yet.
+        Binding toBeResolvedLater = new Binding();
+        toBeResolvedLater.to = ctx.next.getText();
+        ctx.conditionA().forEach(conditionContext -> {
+            AnalogCondition condition = new AnalogCondition();
+            if(conditionContext.connector != null) {
+                condition.setConnector(CONNECTOR.valueOf(conditionContext.connector.getText()));
+            }
+            condition.setSensor(sensors.get(conditionContext.trigger.getText()));
+            condition.setValue(Double.valueOf(conditionContext.value.getText()));
+            toBeResolvedLater.analogConditions.add(condition);
+        });
+        toBeResolvedLater.to = ctx.next.getText();
         bindings.put(currentState.getName(), toBeResolvedLater);
     }
 

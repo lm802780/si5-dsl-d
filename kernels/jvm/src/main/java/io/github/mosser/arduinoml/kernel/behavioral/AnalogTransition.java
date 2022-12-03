@@ -1,19 +1,21 @@
 package io.github.mosser.arduinoml.kernel.behavioral;
 
+import io.github.mosser.arduinoml.kernel.behavioral.condition.AnalogCondition;
+import io.github.mosser.arduinoml.kernel.behavioral.condition.Condition;
 import io.github.mosser.arduinoml.kernel.generator.Visitable;
 import io.github.mosser.arduinoml.kernel.generator.Visitor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TransitionCondition extends Transition implements Visitable {
-    private List<Condition> conditions = new ArrayList<>();
+public class AnalogTransition extends Transition implements Visitable {
+    private List<AnalogCondition> conditions = new ArrayList<>();
 
-    public List<Condition> getConditions() {
+    public List<AnalogCondition> getConditions() {
         return conditions;
     }
 
-    public void setConditions(List<Condition> conditions) {
+    public void setConditions(List<AnalogCondition> conditions) {
         this.conditions = conditions;
     }
 
