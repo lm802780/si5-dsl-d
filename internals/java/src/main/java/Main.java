@@ -50,4 +50,42 @@ public class Main {
                 .endTransitionTable()
                 .build();
     }
+
+    // Scenario 2: alarm with a delay
+    public static App dualCheckAlarm() {
+        return application("dual_check_alarm")
+                .uses(sensor("buttonOne", 9))
+                .uses(actuator("buttonTwo", 8))
+                .uses(actuator("led", 12))
+                .hasForState("on")
+                    .setting("led").toHigh()
+                .endState()
+                .hasForState("off").initial()
+                    .setting("led").toLow()
+                .endState()
+                .beginTransitionTable()
+                    .from("on").when("buttonOne").isHigh().goTo("off")
+                    .from("off").when("buttonOne").isHigh().goTo("on")
+                    .from("on").when("buttonTwo").isHigh().goTo("off")
+                    .from("off").when("buttonTwo").isHigh().goTo("on")
+                .endTransitionTable().build();
+    }
+
+    // Scenario 3: state based alarm
+    public static App stateBasedAlarm() {
+        return application("state_based_alarm")
+                .uses(sensor("button", 9))
+                .uses(actuator("led", 12))
+                .hasForState("on")
+                    .setting("led").toHigh()
+                .endState()
+                .hasForState("off").initial()
+                    .setting("led").toLow()
+                .endState()
+                .beginTransitionTable()
+                    .from("on").when("button").isHigh().goTo("off")
+                    .from("off").when("button").isHigh().goTo("on")
+                .endTransitionTable().build();
+
+    }
 }
