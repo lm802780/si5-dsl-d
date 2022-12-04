@@ -67,7 +67,7 @@ public class ToWiring extends Visitor<StringBuffer> {
             return;
         }
         if (context.get("pass") == PASS.TWO) {
-            w(String.format("  pinMode(%d, OUTPUT); // %s [Actuator]%n", actuator.getPin(), actuator.getName()));
+            w(String.format("  pinMode(%s, OUTPUT); // %s [Actuator]%n", actuator.getPin(), actuator.getName()));
         }
     }
 
@@ -79,7 +79,7 @@ public class ToWiring extends Visitor<StringBuffer> {
             return;
         }
         if (context.get("pass") == PASS.TWO) {
-            w(String.format("  pinMode(%d, INPUT);  // %s [Sensor]%n", sensor.getPin(), sensor.getName()));
+            w(String.format("  pinMode(%s, INPUT);  // %s [Sensor]%n", sensor.getPin(), sensor.getName()));
         }
     }
 
@@ -112,7 +112,7 @@ public class ToWiring extends Visitor<StringBuffer> {
             StringBuilder conditionBuilder = new StringBuilder();
             conditionBuilder.append("\t\t\tif(");
             for(AnalogCondition condition : analogTransition.getConditions()) {
-                conditionBuilder.append(String.format("(analogRead(%d) == %s)",condition.getSensor().getPin(), condition.getValue()));
+                conditionBuilder.append(String.format("(analogRead(%s) == %s)",condition.getSensor().getPin(), condition.getValue()));
                 if(condition.getConnector() != null) {
                     conditionBuilder.append(String.format("%s ", condition.getConnector().getCondition()));
                 }
@@ -155,7 +155,7 @@ public class ToWiring extends Visitor<StringBuffer> {
             return;
         }
         if (context.get("pass") == PASS.TWO) {
-            w(String.format("\t\t\tdigitalWrite(%d,%s);%n", action.getActuator().getPin(), action.getValue()));
+            w(String.format("\t\t\tdigitalWrite(%s,%s);%n", action.getActuator().getPin(), action.getValue()));
         }
     }
 

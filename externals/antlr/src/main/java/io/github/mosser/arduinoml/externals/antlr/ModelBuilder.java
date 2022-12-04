@@ -95,7 +95,7 @@ public class ModelBuilder extends ArduinomlBaseListener {
     public void enterSensor(ArduinomlParser.SensorContext ctx) {
         Sensor sensor = new Sensor();
         sensor.setName(ctx.location().id.getText());
-        sensor.setPin(Integer.parseInt(ctx.location().port.getText()));
+        sensor.setPin(ctx.location().port.getText());
         this.theApp.getBricks().add(sensor);
         sensors.put(sensor.getName(), sensor);
     }
@@ -104,7 +104,7 @@ public class ModelBuilder extends ArduinomlBaseListener {
     public void enterAnalogSensor(ArduinomlParser.AnalogSensorContext ctx) {
         Sensor sensor = new Sensor();
         sensor.setName(ctx.location().id.getText());
-        sensor.setPin(Integer.parseInt(ctx.location().port.getText()));
+        sensor.setPin(ctx.location().port.getText());
         this.theApp.getBricks().add(sensor);
         sensors.put(sensor.getName(), sensor);
     }
@@ -113,7 +113,7 @@ public class ModelBuilder extends ArduinomlBaseListener {
     public void enterActuator(ArduinomlParser.ActuatorContext ctx) {
         Actuator actuator = new Actuator();
         actuator.setName(ctx.location().id.getText());
-        actuator.setPin(Integer.parseInt(ctx.location().port.getText()));
+        actuator.setPin(ctx.location().port.getText());
         this.theApp.getBricks().add(actuator);
         actuators.put(actuator.getName(), actuator);
     }
@@ -154,7 +154,6 @@ public class ModelBuilder extends ArduinomlBaseListener {
             if(conditionContext.connector != null) {
                 condition.setConnector(CONNECTOR.valueOf(conditionContext.connector.getText()));
             }
-
             condition.setSensor(sensors.get(conditionContext.trigger.getText()));
             condition.setValue(SIGNAL.valueOf(conditionContext.value.getText()));
             toBeResolvedLater.digitalConditions.add(condition);

@@ -30,7 +30,7 @@ states          :   state+;
  ** Lexer rules **
  *****************/
 
-PORT_NUMBER     :   [1-9] | '11' | '12' | 'A0';
+PORT_NUMBER     :   [1-9] | '11' | '12' | 'A0'| 'A1';
 IDENTIFIER      :   LOWERCASE (LOWERCASE|UPPERCASE)+;
 SIGNAL          :   'HIGH' | 'LOW';
 CONNECTOR       :   'AND' | 'OR';
