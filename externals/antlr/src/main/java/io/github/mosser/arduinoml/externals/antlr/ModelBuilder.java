@@ -6,6 +6,8 @@ import io.github.mosser.arduinoml.kernel.App;
 import io.github.mosser.arduinoml.kernel.behavioral.*;
 import io.github.mosser.arduinoml.kernel.behavioral.condition.AnalogCondition;
 import io.github.mosser.arduinoml.kernel.behavioral.condition.DigitalCondition;
+import io.github.mosser.arduinoml.kernel.behavioral.transition.AnalogTransition;
+import io.github.mosser.arduinoml.kernel.behavioral.transition.DigitalTransition;
 import io.github.mosser.arduinoml.kernel.structural.Actuator;
 import io.github.mosser.arduinoml.kernel.structural.CONNECTOR;
 import io.github.mosser.arduinoml.kernel.structural.SIGNAL;

@@ -1,5 +1,6 @@
-package io.github.mosser.arduinoml.kernel.behavioral;
+package io.github.mosser.arduinoml.kernel.behavioral.transition;
 
+import io.github.mosser.arduinoml.kernel.behavioral.State;
 import io.github.mosser.arduinoml.kernel.generator.Visitable;
 import io.github.mosser.arduinoml.kernel.generator.Visitor;
 
