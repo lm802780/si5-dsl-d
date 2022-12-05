@@ -8,13 +8,12 @@ class GroovuinoMLDSL {
     private GroovyShell shell
     private CompilerConfiguration configuration
     private GroovuinoMLBinding binding
-    private GroovuinoMLBasescript basescript
 
     GroovuinoMLDSL() {
         binding = new GroovuinoMLBinding()
         binding.setGroovuinoMLModel(new GroovuinoMLModel(binding));
         configuration = getDSLConfiguration()
-        configuration.setScriptBaseClass("main.groovy.groovuinoml.dsl.GroovuinoMLBasescript")
+        configuration.setScriptBaseClass("groovuinoml.dsl.GroovuinoMLBasescript")
         shell = new GroovyShell(configuration)
 
         binding.setVariable("high", SIGNAL.HIGH)
@@ -29,21 +28,21 @@ class GroovuinoMLDSL {
             //disallow method definitions
             methodDefinitionAllowed = true
             //empty white list => forbid imports
-            importsWhitelist = [
+            allowedImports = [
                     'java.lang.*'
             ]
-            staticImportsWhitelist = []
-            staticStarImportsWhitelist = []
+            allowedStaticImports = []
+            allowedStaticStarImports = []
             //language tokens disallowed
 //			tokensBlacklist= []
             //language tokens allowed
-            tokensWhitelist = []
+            allowedTokens = []
             //types allowed to be used  (including primitive types)
-            constantTypesClassesWhiteList = [
+            allowedConstantTypesClasses = [
                     int, Integer, Number, Integer.TYPE, String, Object
             ]
             //classes who are allowed to be receivers of method calls
-            receiversClassesWhiteList = [
+            allowedReceiversClasses = [
                     int, Number, Integer, String, Object
             ]
         }

@@ -52,7 +52,7 @@
 				</dependencies>
 				<configuration>
 					<scripts>
-						<script>src/main/groovy/groovuinoml/main/GroovuinoML.java</script>
+						<script>groovuinoml/main/GroovuinoML.java</script>
 					</scripts>
 				</configuration>
 			</plugin>

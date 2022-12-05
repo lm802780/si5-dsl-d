@@ -46,7 +46,7 @@ abstract class GroovuinoMLBasescript extends Script {
         [to: { state2 ->
             [when: { sensor ->
                 [becomes: { signal ->
-                    ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().createTransition(
+                    ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().createSingleDigitalTransition(
                             state1 instanceof String ? (State) ((GroovuinoMLBinding) this.getBinding()).getVariable(state1) : (State) state1,
                             state2 instanceof String ? (State) ((GroovuinoMLBinding) this.getBinding()).getVariable(state2) : (State) state2,
                             sensor instanceof String ? (Sensor) ((GroovuinoMLBinding) this.getBinding()).getVariable(sensor) : (Sensor) sensor,
