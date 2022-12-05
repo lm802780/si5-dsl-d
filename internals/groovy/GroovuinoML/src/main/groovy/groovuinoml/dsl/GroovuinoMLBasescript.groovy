@@ -6,16 +6,20 @@ import io.github.mosser.arduinoml.kernel.structural.Actuator
 import io.github.mosser.arduinoml.kernel.structural.SIGNAL
 import io.github.mosser.arduinoml.kernel.structural.Sensor
 
+import java.awt.Toolkit
+import java.awt.datatransfer.Clipboard
+import java.awt.datatransfer.StringSelection
+
 abstract class GroovuinoMLBasescript extends Script {
     // sensor "name" pin n
     def sensor(String name) {
-        [pin  : { n -> ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().createSensor(name, n) },
-         onPin: { n -> ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().createSensor(name, n) }]
+        [pin  : { Integer n -> ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().createSensor(name, n) },
+         onPin: { Integer n -> ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().createSensor(name, n) }]
     }
 
     // actuator "name" pin n
     def actuator(String name) {
-        [pin: { n -> ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().createActuator(name, n) }]
+        [pin: { Integer n -> ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().createActuator(name, n) }]
     }
 
     // state "name" means actuator becomes signal [and actuator becomes signal]*n
@@ -44,16 +48,16 @@ abstract class GroovuinoMLBasescript extends Script {
     // from state1 to state2 when sensor becomes signal
     def from(state1) {
         [to: { state2 ->
-            State s1 = state1 instanceof String ? (State) ((GroovuinoMLBinding) this.getBinding()).getVariable(state1) : (State) state1;
-            State s2 = state2 instanceof String ? (State) ((GroovuinoMLBinding) this.getBinding()).getVariable(state2) : (State) state2;
-            ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().createDigitalTransitionWithoutCondition(s1, s2) ;
+            State s1 = state1 instanceof String ? (State) ((GroovuinoMLBinding) this.getBinding()).getVariable(state1) : (State) state1
+            State s2 = state2 instanceof String ? (State) ((GroovuinoMLBinding) this.getBinding()).getVariable(state2) : (State) state2
+            ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().createDigitalTransitionWithoutCondition(s1, s2)
             def closure
 
             [when: { sensor ->
                 [becomes: { signal ->
-                    Sensor s = sensor instanceof String ? (Sensor) ((GroovuinoMLBinding) this.getBinding()).getVariable(sensor) : (Sensor) sensor;
-                    SIGNAL sig = signal instanceof String ? (SIGNAL) ((GroovuinoMLBinding) this.getBinding()).getVariable(signal) : (SIGNAL) signal;
-                    ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().addDigitalConditionToTransition(s1, s, sig) ;
+                    Sensor s = sensor instanceof String ? (Sensor) ((GroovuinoMLBinding) this.getBinding()).getVariable(sensor) : (Sensor) sensor
+                    SIGNAL sig = signal instanceof String ? (SIGNAL) ((GroovuinoMLBinding) this.getBinding()).getVariable(signal) : (SIGNAL) signal
+                    ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().addDigitalConditionToTransition(s1, s, sig)
                 }]
             }]
         }]
@@ -61,7 +65,13 @@ abstract class GroovuinoMLBasescript extends Script {
 
     // export name
     def export(String name) {
-        println(((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().generateCode(name).toString())
+        String resultCode = ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().generateCode(name).toString()
+        println(resultCode)
+
+        // Copy the code in the clipboard.
+        StringSelection selection = new StringSelection(resultCode)
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard()
+        clipboard.setContents(selection, selection)
     }
 
     // disable run method while running

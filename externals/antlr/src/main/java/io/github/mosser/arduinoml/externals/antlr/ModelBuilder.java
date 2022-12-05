@@ -175,7 +175,6 @@ public class ModelBuilder extends ArduinomlBaseListener {
         toBeResolvedLater.to = ctx.next.getText();
         ctx.conditionA().forEach(conditionContext -> {
             AnalogCondition condition = new AnalogCondition();
-            System.out.println(ctx.conditionA());
             if (conditionContext.connector != null) {
                 condition.setConnector(CONNECTOR.valueOf(conditionContext.connector.getText()));
             }
