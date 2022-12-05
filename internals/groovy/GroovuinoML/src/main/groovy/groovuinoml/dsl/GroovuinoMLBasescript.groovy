@@ -48,14 +48,16 @@ abstract class GroovuinoMLBasescript extends Script {
             State s2 = state2 instanceof String ? (State) ((GroovuinoMLBinding) this.getBinding()).getVariable(state2) : (State) state2;
             ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().createDigitalTransitionWithoutCondition(s1, s2) ;
             def closure
-
-            [when: { sensor ->
+            closure=  { sensor ->
                 [becomes: { signal ->
-                    Sensor s = sensor instanceof String ? (Sensor) ((GroovuinoMLBinding) this.getBinding()).getVariable(sensor) : (Sensor) sensor;
+                     Sensor s = sensor instanceof String ? (Sensor) ((GroovuinoMLBinding) this.getBinding()).getVariable(sensor) : (Sensor) sensor;
                     SIGNAL sig = signal instanceof String ? (SIGNAL) ((GroovuinoMLBinding) this.getBinding()).getVariable(signal) : (SIGNAL) signal;
                     ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().addDigitalConditionToTransition(s1, s, sig) ;
+                    [and: closure]
+                    [or: closure]
                 }]
-            }]
+            }
+            [when: closure]
         }]
     }
 
