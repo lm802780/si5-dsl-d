@@ -1,7 +1,7 @@
 package io.github.mosser.arduinoml.embedded.java.dsl;
 
 
-import io.github.mosser.arduinoml.kernel.behavioral.Transition;
+import io.github.mosser.arduinoml.kernel.behavioral.transition.Transition;
 import io.github.mosser.arduinoml.kernel.structural.SIGNAL;
 
 public class TransitionBuilder {
@@ -39,4 +39,6 @@ public class TransitionBuilder {
     }
 
 
+    public TransitionBuilder or() {
+    }
 }
