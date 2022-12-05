@@ -6,8 +6,8 @@ public enum INFSUP {
 
     private final String symbol;
 
-    INFSUP(String condition) {
-        this.symbol = condition;
+    INFSUP(String symbol) {
+        this.symbol = symbol;
     }
 
     public String getSymbol() {
