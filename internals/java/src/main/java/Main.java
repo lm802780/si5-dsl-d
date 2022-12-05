@@ -64,10 +64,8 @@ public class Main {
                     .setting("led").toLow()
                 .endState()
                 .beginTransitionTable()
-                    .from("on").when("buttonOne").isHigh().goTo("off")
+                    .from("on").when("buttonOne").isLow().or().when("buttonTwo").isLow().goTo("off")
                     .from("off").when("buttonOne").isHigh().goTo("on")
-                    .from("on").when("buttonTwo").isHigh().goTo("off")
-                    .from("off").when("buttonTwo").isHigh().goTo("on")
                 .endTransitionTable().build();
     }
 

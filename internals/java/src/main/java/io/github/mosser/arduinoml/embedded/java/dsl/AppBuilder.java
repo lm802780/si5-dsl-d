@@ -51,7 +51,7 @@ public class AppBuilder {
             b.setName(name);
             if(port < 1 || port > 12)
                 throw new IllegalArgumentException("Illegal brick port: ["+port+"]");
-            b.setPin(port);
+            b.setPin(String.valueOf(port));
             return b;
         } catch (InstantiationException | IllegalAccessException iae) {
             throw new IllegalArgumentException("Unable to instantiate " + kind.getCanonicalName());
