@@ -65,6 +65,22 @@ public class GroovuinoMLModel {
         from.setTransition(transition);
     }
 
+    public void createDigitalTransitionWithoutCondition(State from, State to) {
+        DigitalTransition transition = new DigitalTransition();
+        transition.setConditions(new ArrayList<>());
+        transition.setNext(to);
+        from.setTransition(transition);
+    }
+
+    public void addDigitalConditionToTransition(State from, Sensor sensor, SIGNAL value) {
+        DigitalTransition transition = (DigitalTransition) from.getTransition();
+        List<DigitalCondition> conditions = transition.getConditions();
+        DigitalCondition condition = new DigitalCondition();
+        condition.setSensor(sensor);
+        condition.setValue(value);
+        conditions.add(condition);
+    }
+
     public void setInitialState(State state) {
         this.initialState = state;
     }

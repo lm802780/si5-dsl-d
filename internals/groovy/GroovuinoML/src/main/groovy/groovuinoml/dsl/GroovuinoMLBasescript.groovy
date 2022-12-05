@@ -44,13 +44,16 @@ abstract class GroovuinoMLBasescript extends Script {
     // from state1 to state2 when sensor becomes signal
     def from(state1) {
         [to: { state2 ->
+            State s1 = state1 instanceof String ? (State) ((GroovuinoMLBinding) this.getBinding()).getVariable(state1) : (State) state1;
+            State s2 = state2 instanceof String ? (State) ((GroovuinoMLBinding) this.getBinding()).getVariable(state2) : (State) state2;
+            ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().createDigitalTransitionWithoutCondition(s1, s2) ;
+            def closure
+
             [when: { sensor ->
                 [becomes: { signal ->
-                    ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().createSingleDigitalTransition(
-                            state1 instanceof String ? (State) ((GroovuinoMLBinding) this.getBinding()).getVariable(state1) : (State) state1,
-                            state2 instanceof String ? (State) ((GroovuinoMLBinding) this.getBinding()).getVariable(state2) : (State) state2,
-                            sensor instanceof String ? (Sensor) ((GroovuinoMLBinding) this.getBinding()).getVariable(sensor) : (Sensor) sensor,
-                            signal instanceof String ? (SIGNAL) ((GroovuinoMLBinding) this.getBinding()).getVariable(signal) : (SIGNAL) signal)
+                    Sensor s = sensor instanceof String ? (Sensor) ((GroovuinoMLBinding) this.getBinding()).getVariable(sensor) : (Sensor) sensor;
+                    SIGNAL sig = signal instanceof String ? (SIGNAL) ((GroovuinoMLBinding) this.getBinding()).getVariable(signal) : (SIGNAL) signal;
+                    ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().addDigitalConditionToTransition(s1, s, sig) ;
                 }]
             }]
         }]
