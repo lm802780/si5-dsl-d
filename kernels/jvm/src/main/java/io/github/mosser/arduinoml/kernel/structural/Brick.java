@@ -5,13 +5,13 @@ import io.github.mosser.arduinoml.kernel.generator.Visitable;
 
 public abstract class Brick implements NamedElement, Visitable {
     private String name;
-    private int pin;
+    private String pin;
 
-    public int getPin() {
+    public String getPin() {
         return pin;
     }
 
-    public void setPin(int pin) {
+    public void setPin(String pin) {
         this.pin = pin;
     }
 
@@ -24,5 +24,4 @@ public abstract class Brick implements NamedElement, Visitable {
     public void setName(String name) {
         this.name = name;
     }
-
 }

@@ -1,0 +1,17 @@
+application temporalTransitions
+
+# Declaring bricks
+sensor button: 9
+actuator ledOne: 12
+
+# Declaring states
+-> off {
+    ledOne <= LOW
+    button is HIGH => on
+}
+
+on {
+    ledOne <= HIGH
+    800 ms => off
+}
+

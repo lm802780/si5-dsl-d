@@ -9,28 +9,34 @@ root            :   declaration bricks states EOF;
 
 declaration     :   'application' name=IDENTIFIER;
 
-bricks          :   (sensor|actuator)+;
+bricks          :   (sensor|analogSensor|actuator)+;
     sensor      :   'sensor'   location ;
+    analogSensor:   'analog sensor'   location ;
     actuator    :   'actuator' location ;
     location    :   id=IDENTIFIER ':' port=PORT_NUMBER;
 
 states          :   state+;
-    state       :   initial? name=IDENTIFIER '{'  action* (transition | transitionCondition) '}';
+    state       :   initial? name=IDENTIFIER '{'  action* transition '}';
     action      :   actionable+ '<=' value=SIGNAL;
         actionable: receiver=IDENTIFIER;
-    transition  :   trigger=IDENTIFIER 'is' value=SIGNAL '=>' next=IDENTIFIER;
-    transitionCondition  :   trigger1=IDENTIFIER 'is' value=SIGNAL(condition)* '=>' next=IDENTIFIER;
-        condition: connector=CONNECTOR trigger=IDENTIFIER 'is' value=SIGNAL ;
+    transition: (digitalTransition|analogTransition|sleepTransition)+;
+        digitalTransition  :   (condition)* '=>' next=IDENTIFIER;
+            condition: trigger=IDENTIFIER 'is' value=SIGNAL (connector=CONNECTOR)?  ;
+        analogTransition  :   (conditionA)* '=>' next=IDENTIFIER;
+            conditionA : trigger=IDENTIFIER infsup=INFSUP value=NUMBER (connector=CONNECTOR)?;
+        sleepTransition      :  timeInMillis=NUMBER 'ms' '=>' next=IDENTIFIER;
     initial     :   '->';
 
 /*****************
  ** Lexer rules **
  *****************/
 
-PORT_NUMBER     :   [1-9] | '11' | '12';
+PORT_NUMBER     :   [1-9] | '11' | '12' | 'A0'| 'A1';
 IDENTIFIER      :   LOWERCASE (LOWERCASE|UPPERCASE)+;
 SIGNAL          :   'HIGH' | 'LOW';
 CONNECTOR       :   'AND' | 'OR';
+INFSUP       :   'ABOVE' | 'BELOW';
+NUMBER       :   [0-9]+;
 
 /*************
  ** Helpers **
