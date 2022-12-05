@@ -9,7 +9,10 @@ import io.github.mosser.arduinoml.kernel.behavioral.condition.DigitalCondition;
 import io.github.mosser.arduinoml.kernel.behavioral.transition.Transition;
 import io.github.mosser.arduinoml.kernel.generator.ToWiring;
 import io.github.mosser.arduinoml.kernel.generator.Visitor;
-import io.github.mosser.arduinoml.kernel.structural.*;
+import io.github.mosser.arduinoml.kernel.structural.Actuator;
+import io.github.mosser.arduinoml.kernel.structural.Brick;
+import io.github.mosser.arduinoml.kernel.structural.SIGNAL;
+import io.github.mosser.arduinoml.kernel.structural.Sensor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,18 +55,7 @@ public class GroovuinoMLModel {
         this.binding.setVariable(name, state);
     }
 
-//    public void createSingleDigitalTransition(State from, State to, Sensor sensor, SIGNAL value) {
-//        DigitalTransition transition = new DigitalTransition();
-//        transition.setNext(to);
-//        List<DigitalCondition> conditions = new ArrayList<>();
-//        DigitalCondition condition = new DigitalCondition();
-//        condition.setSensor(sensor);
-//        condition.setValue(value);
-//        transition.setConditions(conditions);
-//        from.addTransition(transition);
-//    }
-
-    public Transition createDigitalTransitionWithoutCondition(State from, State to) {
+    public Transition createTransitionWithoutCondition(State from, State to) {
         Transition transition = new Transition();
         if(transition.getConditions() == null) {
             transition.setConditions(new ArrayList<>());

@@ -1,3 +1,5 @@
+//temporal transitions
+
 sensor "button" pin 9
 actuator "ledOne" pin 12
 
