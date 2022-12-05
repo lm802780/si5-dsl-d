@@ -1,5 +1,5 @@
 // Wiring code generated from an ArduinoML model
-// Application name: Switch!
+// Application name: verySimpleAlarm
 
 long debounce = 200;
 
