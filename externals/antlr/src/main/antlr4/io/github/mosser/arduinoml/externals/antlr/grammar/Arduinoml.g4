@@ -19,12 +19,12 @@ states          :   state+;
     state       :   initial? name=IDENTIFIER '{'  action* transition '}';
     action      :   actionable+ '<=' value=SIGNAL;
         actionable: receiver=IDENTIFIER;
-    transition: (digitalTransition|analogTransition|transitionSleep)+;
+    transition: (digitalTransition|analogTransition|sleepTransition)+;
         digitalTransition  :   (condition)* '=>' next=IDENTIFIER;
             condition: trigger=IDENTIFIER 'is' value=SIGNAL (connector=CONNECTOR)?  ;
         analogTransition  :   (conditionA)* '=>' next=IDENTIFIER;
             conditionA : trigger=IDENTIFIER infsup=INFSUP value=NUMBER (connector=CONNECTOR)?;
-        transitionSleep      :  timeInMillis=NUMBER 'ms' '=>' next=IDENTIFIER;
+        sleepTransition      :  timeInMillis=NUMBER 'ms' '=>' next=IDENTIFIER;
     initial     :   '->';
 
 /*****************

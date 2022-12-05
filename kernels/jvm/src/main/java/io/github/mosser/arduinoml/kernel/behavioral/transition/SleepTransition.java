@@ -1,8 +1,9 @@
-package io.github.mosser.arduinoml.kernel.behavioral;
+package io.github.mosser.arduinoml.kernel.behavioral.transition;
 
+import io.github.mosser.arduinoml.kernel.behavioral.State;
 import io.github.mosser.arduinoml.kernel.generator.Visitor;
 
-public class TransitionSleep extends Transition {
+public class SleepTransition extends Transition {
     private State next;
     private Long timeInMillis;
 

@@ -2,15 +2,12 @@ package io.github.mosser.arduinoml.kernel.generator;
 
 import io.github.mosser.arduinoml.kernel.App;
 import io.github.mosser.arduinoml.kernel.behavioral.Action;
-import io.github.mosser.arduinoml.kernel.behavioral.Condition;
 import io.github.mosser.arduinoml.kernel.behavioral.State;
-import io.github.mosser.arduinoml.kernel.behavioral.Transition;
-import io.github.mosser.arduinoml.kernel.behavioral.TransitionCondition;
-import io.github.mosser.arduinoml.kernel.behavioral.TransitionSleep;
 import io.github.mosser.arduinoml.kernel.behavioral.condition.AnalogCondition;
 import io.github.mosser.arduinoml.kernel.behavioral.condition.DigitalCondition;
 import io.github.mosser.arduinoml.kernel.behavioral.transition.AnalogTransition;
 import io.github.mosser.arduinoml.kernel.behavioral.transition.DigitalTransition;
+import io.github.mosser.arduinoml.kernel.behavioral.transition.SleepTransition;
 import io.github.mosser.arduinoml.kernel.structural.Actuator;
 import io.github.mosser.arduinoml.kernel.structural.Brick;
 import io.github.mosser.arduinoml.kernel.structural.Sensor;
@@ -103,7 +100,7 @@ public class ToWiring extends Visitor<StringBuffer> {
             w("\t\tcase " + state.getName() + ":\n");
 
             // If the state contains any sleepTransition, initialize the now clock if it is not.
-            if (state.getTransition() instanceof TransitionSleep) {
+            if (state.getTransition() instanceof SleepTransition) {
                 w("\t\t\tif (now == 0) {\n");
                 w("\t\t\t\tnow = millis();\n");
                 w("\t\t\t}\n");
@@ -128,9 +125,9 @@ public class ToWiring extends Visitor<StringBuffer> {
         if (context.get("pass") == PASS.TWO) {
             StringBuilder conditionBuilder = new StringBuilder();
             conditionBuilder.append("\t\t\tif(");
-            for(AnalogCondition condition : analogTransition.getConditions()) {
-                conditionBuilder.append(String.format("(analogRead(%s) == %s)",condition.getSensor().getPin(), condition.getValue()));
-                if(condition.getConnector() != null) {
+            for (AnalogCondition condition : analogTransition.getConditions()) {
+                conditionBuilder.append(String.format("(analogRead(%s) == %s)", condition.getSensor().getPin(), condition.getValue()));
+                if (condition.getConnector() != null) {
                     conditionBuilder.append(String.format("%s ", condition.getConnector().getCondition()));
                 }
             }
@@ -142,9 +139,9 @@ public class ToWiring extends Visitor<StringBuffer> {
     }
 
     @Override
-    public void visit(TransitionSleep transitionSleep) {
-        w(String.format("\t\t\tif (millis()-now > %d) {%n", transitionSleep.getTimeInMillis()));
-        w(String.format("\t\t\t\tcurrentState = %s;%n", transitionSleep.getNext().getName()));
+    public void visit(SleepTransition sleepTransition) {
+        w(String.format("\t\t\tif (millis()-now > %d) {%n", sleepTransition.getTimeInMillis()));
+        w(String.format("\t\t\t\tcurrentState = %s;%n", sleepTransition.getNext().getName()));
         w("\t\t\t\tnow = 0;\n");
         w("\t\t\t\tbreak;\n");
         w("\t\t\t}\n");
@@ -158,18 +155,18 @@ public class ToWiring extends Visitor<StringBuffer> {
         if (context.get("pass") == PASS.TWO) {
             StringBuilder conditionBuilder = new StringBuilder();
             conditionBuilder.append("\t\t\tif(");
-             for(DigitalCondition condition : digitalTransition.getConditions()) {
+            for (DigitalCondition condition : digitalTransition.getConditions()) {
                 w(String.format("\t\t\t%sBounceGuard = millis() - %sLastDebounceTime > debounce;%n", condition.getSensor().getName(), condition.getSensor().getName()));
-                conditionBuilder.append(String.format("(digitalRead(%s) == %s && %sBounceGuard)",condition.getSensor().getPin(), condition.getValue(), condition.getSensor().getName()));
-                if(condition.getConnector() != null) {
+                conditionBuilder.append(String.format("(digitalRead(%s) == %s && %sBounceGuard)", condition.getSensor().getPin(), condition.getValue(), condition.getSensor().getName()));
+                if (condition.getConnector() != null) {
                     conditionBuilder.append(String.format(" %s ", condition.getConnector().getCondition()));
                 }
-             }
-                 conditionBuilder.append(") {\n");
-                 w(conditionBuilder.toString());
-            for(DigitalCondition condition : digitalTransition.getConditions()) {
-                 w(String.format("\t\t\t\t%sLastDebounceTime = millis();%n", condition.getSensor().getName()));
-}
+            }
+            conditionBuilder.append(") {\n");
+            w(conditionBuilder.toString());
+            for (DigitalCondition condition : digitalTransition.getConditions()) {
+                w(String.format("\t\t\t\t%sLastDebounceTime = millis();%n", condition.getSensor().getName()));
+            }
             w("\t\t\t\tcurrentState = " + digitalTransition.getNext().getName() + ";\n");
             w("\t\t\t}\n");
         }

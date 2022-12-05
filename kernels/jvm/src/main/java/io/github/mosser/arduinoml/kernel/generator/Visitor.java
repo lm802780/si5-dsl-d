@@ -3,11 +3,9 @@ package io.github.mosser.arduinoml.kernel.generator;
 import io.github.mosser.arduinoml.kernel.App;
 import io.github.mosser.arduinoml.kernel.behavioral.Action;
 import io.github.mosser.arduinoml.kernel.behavioral.State;
-import io.github.mosser.arduinoml.kernel.behavioral.Transition;
-import io.github.mosser.arduinoml.kernel.behavioral.TransitionCondition;
-import io.github.mosser.arduinoml.kernel.behavioral.TransitionSleep;
 import io.github.mosser.arduinoml.kernel.behavioral.transition.AnalogTransition;
 import io.github.mosser.arduinoml.kernel.behavioral.transition.DigitalTransition;
+import io.github.mosser.arduinoml.kernel.behavioral.transition.SleepTransition;
 import io.github.mosser.arduinoml.kernel.structural.Actuator;
 import io.github.mosser.arduinoml.kernel.structural.Sensor;
 
@@ -24,7 +22,7 @@ public abstract class Visitor<T> {
 
     public abstract void visit(DigitalTransition digitalTransition);
 
-    public abstract void visit(TransitionSleep transitionSleep);
+    public abstract void visit(SleepTransition sleepTransition);
 
     public abstract void visit(Action action);
 

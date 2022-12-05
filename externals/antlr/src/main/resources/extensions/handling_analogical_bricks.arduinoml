@@ -1,7 +1,7 @@
 application verySimpleAlarm
 
 # Declaring bricks
-analog sensor temp: A0
+analog sensor temp: A1
 actuator buzzer: 11
 
 

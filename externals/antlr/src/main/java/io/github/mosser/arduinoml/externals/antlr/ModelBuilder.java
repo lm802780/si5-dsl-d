@@ -5,9 +5,11 @@ import io.github.mosser.arduinoml.externals.antlr.grammar.ArduinomlParser;
 import io.github.mosser.arduinoml.kernel.App;
 import io.github.mosser.arduinoml.kernel.behavioral.Action;
 import io.github.mosser.arduinoml.kernel.behavioral.State;
-import io.github.mosser.arduinoml.kernel.behavioral.TransitionSleep;
 import io.github.mosser.arduinoml.kernel.behavioral.condition.AnalogCondition;
 import io.github.mosser.arduinoml.kernel.behavioral.condition.DigitalCondition;
+import io.github.mosser.arduinoml.kernel.behavioral.transition.AnalogTransition;
+import io.github.mosser.arduinoml.kernel.behavioral.transition.DigitalTransition;
+import io.github.mosser.arduinoml.kernel.behavioral.transition.SleepTransition;
 import io.github.mosser.arduinoml.kernel.structural.Actuator;
 import io.github.mosser.arduinoml.kernel.structural.CONNECTOR;
 import io.github.mosser.arduinoml.kernel.structural.SIGNAL;
@@ -51,7 +53,6 @@ public class ModelBuilder extends ArduinomlBaseListener {
          * Name of the next state, as its instance might not have been compiled yet.
          */
         protected String to;
-        protected Sensor trigger;
         protected Long timeInMillis;
         List<DigitalCondition> digitalConditions = new ArrayList<>();
         List<AnalogCondition> analogConditions = new ArrayList<>();
@@ -75,7 +76,7 @@ public class ModelBuilder extends ArduinomlBaseListener {
         bindings.forEach((key, binding) -> {
             if (binding.timeInMillis != null) {
                 // Sleep transition
-                TransitionSleep t = new TransitionSleep();
+                SleepTransition t = new SleepTransition();
                 t.setTimeInMillis(binding.timeInMillis);
                 t.setNext(states.get(binding.to));
                 states.get(key).setTransition(t);
@@ -189,7 +190,7 @@ public class ModelBuilder extends ArduinomlBaseListener {
     }
 
     @Override
-    public void enterTransitionSleep(ArduinomlParser.TransitionSleepContext ctx) {
+    public void enterSleepTransition(ArduinomlParser.SleepTransitionContext ctx) {
         // Creating a placeholder as the next state might not have been compiled yet.
         Binding toBeResolvedLater = new Binding();
         toBeResolvedLater.to = ctx.next.getText();
