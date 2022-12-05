@@ -1,0 +1,70 @@
+// Wiring code generated from an ArduinoML model
+// Application name: multiStateAlarm
+
+long debounce = 200;
+
+enum STATE {firstStep, secondStep, thirdStep, fourthStep, fifthStep, off};
+STATE currentState = off;
+long now = 0;
+
+boolean buttonBounceGuard = false;
+long buttonLastDebounceTime = 0;
+
+void setup(){
+  pinMode(9, INPUT);  // button [Sensor]
+  pinMode(12, OUTPUT); // led [Actuator]
+  pinMode(11, OUTPUT); // buzzer [Actuator]
+}
+
+void loop() {
+	switch(currentState){
+		case firstStep:
+			digitalWrite(11,HIGH);
+			buttonBounceGuard = millis() - buttonLastDebounceTime > debounce;
+			if((digitalRead(9) == LOW && buttonBounceGuard) ) {
+				buttonLastDebounceTime = millis();
+				currentState = secondStep;
+			}
+		break;
+		case secondStep:
+			buttonBounceGuard = millis() - buttonLastDebounceTime > debounce;
+			if((digitalRead(9) == HIGH && buttonBounceGuard) ) {
+				buttonLastDebounceTime = millis();
+				currentState = thirdStep;
+			}
+		break;
+		case thirdStep:
+			digitalWrite(12,HIGH);
+			digitalWrite(11,LOW);
+			buttonBounceGuard = millis() - buttonLastDebounceTime > debounce;
+			if((digitalRead(9) == LOW && buttonBounceGuard) ) {
+				buttonLastDebounceTime = millis();
+				currentState = fourthStep;
+			}
+		break;
+		case fourthStep:
+			buttonBounceGuard = millis() - buttonLastDebounceTime > debounce;
+			if((digitalRead(9) == HIGH && buttonBounceGuard) ) {
+				buttonLastDebounceTime = millis();
+				currentState = fifthStep;
+			}
+		break;
+		case fifthStep:
+			digitalWrite(12,LOW);
+			buttonBounceGuard = millis() - buttonLastDebounceTime > debounce;
+			if((digitalRead(9) == LOW && buttonBounceGuard) ) {
+				buttonLastDebounceTime = millis();
+				currentState = off;
+			}
+		break;
+		case off:
+			digitalWrite(12,LOW);
+			digitalWrite(11,LOW);
+			buttonBounceGuard = millis() - buttonLastDebounceTime > debounce;
+			if((digitalRead(9) == HIGH && buttonBounceGuard) ) {
+				buttonLastDebounceTime = millis();
+				currentState = firstStep;
+			}
+		break;
+	}
+}
