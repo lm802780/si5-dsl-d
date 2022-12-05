@@ -2,9 +2,9 @@
 
 ## Équipe
 
-| Name                   | Status   |
+| NOM Prénom             | Filière |
 |------------------------|----------|
-| DE SOUSA VIEIRA Thomas | SI5 DS4  |
+| DE SOUSA VIEIRA Thomas | SI5 DS4H |
 | LACROIX Nicolas        | SI5 FISA |
 | LAMASUTA Mickael       | SI5 DS4H |
 | LIAO Chenzhou          | SI5 FISE |
