@@ -1,6 +1,5 @@
 package io.github.mosser.arduinoml.kernel.behavioral.condition;
 
-import io.github.mosser.arduinoml.kernel.behavioral.condition.Condition;
 import io.github.mosser.arduinoml.kernel.structural.SIGNAL;
 
 public class DigitalCondition extends Condition {
