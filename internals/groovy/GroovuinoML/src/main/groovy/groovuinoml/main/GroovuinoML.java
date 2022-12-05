@@ -1,13 +1,13 @@
-package main.groovy.groovuinoml.main;
+package groovuinoml.main;
+
+import groovuinoml.dsl.GroovuinoMLDSL;
 
 import java.io.File;
-
-import main.groovy.groovuinoml.dsl.GroovuinoMLDSL;
 
 /**
  * This main takes one argument: the path to the Groovy script file to execute.
  * This Groovy script file must follow GroovuinoML DSL's rules.
- * 
+ * <p>
  * "We've Got A Groovy Thing Goin'"!
  * 
  * @author Thomas Moreau
