@@ -4,14 +4,12 @@ import groovy.lang.Binding;
 import io.github.mosser.arduinoml.kernel.App;
 import io.github.mosser.arduinoml.kernel.behavioral.Action;
 import io.github.mosser.arduinoml.kernel.behavioral.State;
+import io.github.mosser.arduinoml.kernel.behavioral.condition.Condition;
 import io.github.mosser.arduinoml.kernel.behavioral.condition.DigitalCondition;
-import io.github.mosser.arduinoml.kernel.behavioral.transition.DigitalTransition;
+import io.github.mosser.arduinoml.kernel.behavioral.transition.Transition;
 import io.github.mosser.arduinoml.kernel.generator.ToWiring;
 import io.github.mosser.arduinoml.kernel.generator.Visitor;
-import io.github.mosser.arduinoml.kernel.structural.Actuator;
-import io.github.mosser.arduinoml.kernel.structural.Brick;
-import io.github.mosser.arduinoml.kernel.structural.SIGNAL;
-import io.github.mosser.arduinoml.kernel.structural.Sensor;
+import io.github.mosser.arduinoml.kernel.structural.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,27 +52,33 @@ public class GroovuinoMLModel {
         this.binding.setVariable(name, state);
     }
 
-    public void createSingleDigitalTransition(State from, State to, Sensor sensor, SIGNAL value) {
-        DigitalTransition transition = new DigitalTransition();
+//    public void createSingleDigitalTransition(State from, State to, Sensor sensor, SIGNAL value) {
+//        DigitalTransition transition = new DigitalTransition();
+//        transition.setNext(to);
+//        List<DigitalCondition> conditions = new ArrayList<>();
+//        DigitalCondition condition = new DigitalCondition();
+//        condition.setSensor(sensor);
+//        condition.setValue(value);
+//        transition.setConditions(conditions);
+//        from.addTransition(transition);
+//    }
+
+    public Transition createDigitalTransitionWithoutCondition(State from, State to) {
+        Transition transition = new Transition();
+        if(transition.getConditions() == null) {
+            transition.setConditions(new ArrayList<>());
+        }
         transition.setNext(to);
-        List<DigitalCondition> conditions = new ArrayList<>();
-        DigitalCondition condition = new DigitalCondition();
-        condition.setSensor(sensor);
-        condition.setValue(value);
-        transition.setConditions(conditions);
-        from.setTransition(transition);
+        if(from.getTransitions() == null) {
+            from.setTransitions(new ArrayList<>());
+        }
+        from.addTransition(transition);
+        return transition;
     }
 
-    public void createDigitalTransitionWithoutCondition(State from, State to) {
-        DigitalTransition transition = new DigitalTransition();
-        transition.setConditions(new ArrayList<>());
-        transition.setNext(to);
-        from.setTransition(transition);
-    }
+    public void addDigitalConditionToTransition(Transition transition, Sensor sensor, SIGNAL value) {
 
-    public void addDigitalConditionToTransition(State from, Sensor sensor, SIGNAL value) {
-        DigitalTransition transition = (DigitalTransition) from.getTransition();
-        List<DigitalCondition> conditions = transition.getConditions();
+        List<Condition> conditions = transition.getConditions();
         DigitalCondition condition = new DigitalCondition();
         condition.setSensor(sensor);
         condition.setValue(value);

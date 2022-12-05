@@ -1,0 +1,48 @@
+// Wiring code generated from an ArduinoML model
+// Application name: dualCheckAlarm
+
+long debounce = 200;
+
+enum STATE {on, off};
+STATE currentState = off;
+long now = 0;
+
+boolean buttonOneBounceGuard = false;
+long buttonOneLastDebounceTime = 0;
+
+boolean buttonTwoBounceGuard = false;
+long buttonTwoLastDebounceTime = 0;
+
+void setup(){
+  pinMode(9, INPUT);  // buttonOne [Sensor]
+  pinMode(8, INPUT);  // buttonTwo [Sensor]
+  pinMode(12, OUTPUT); // led [Actuator]
+}
+
+void loop() {
+	switch(currentState){
+		case on:
+			digitalWrite(12,HIGH);
+			buttonOneBounceGuard = millis() - buttonOneLastDebounceTime > debounce;
+			if((digitalRead(9) == LOW && buttonOneBounceGuard) ) {
+				buttonOneLastDebounceTime = millis();
+				currentState = off;
+			}
+			buttonTwoBounceGuard = millis() - buttonTwoLastDebounceTime > debounce;
+			if((digitalRead(8) == LOW && buttonTwoBounceGuard) ) {
+				buttonTwoLastDebounceTime = millis();
+				currentState = off;
+			}
+		break;
+		case off:
+			digitalWrite(12,LOW);
+			buttonTwoBounceGuard = millis() - buttonTwoLastDebounceTime > debounce;
+			buttonOneBounceGuard = millis() - buttonOneLastDebounceTime > debounce;
+			if((digitalRead(8) == HIGH && buttonTwoBounceGuard) && (digitalRead(9) == HIGH && buttonOneBounceGuard) ) {
+				buttonTwoLastDebounceTime = millis();
+				buttonOneLastDebounceTime = millis();
+				currentState = on;
+			}
+		break;
+	}
+}
