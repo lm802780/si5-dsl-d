@@ -1,4 +1,4 @@
-application verySimpleAlarm
+application handlingAnalogicalBricks
 
 # Declaring bricks
 analog sensor temp: A1
