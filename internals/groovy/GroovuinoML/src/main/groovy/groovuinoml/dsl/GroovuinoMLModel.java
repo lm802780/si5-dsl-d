@@ -6,7 +6,9 @@ import groovy.lang.Binding;
 import io.github.mosser.arduinoml.kernel.App;
 import io.github.mosser.arduinoml.kernel.behavioral.Action;
 import io.github.mosser.arduinoml.kernel.behavioral.State;
-import io.github.mosser.arduinoml.kernel.behavioral.Transition;
+import io.github.mosser.arduinoml.kernel.behavioral.condition.Condition;
+import io.github.mosser.arduinoml.kernel.behavioral.condition.DigitalCondition;
+import io.github.mosser.arduinoml.kernel.behavioral.transition.DigitalTransition;
 import io.github.mosser.arduinoml.kernel.generator.ToWiring;
 import io.github.mosser.arduinoml.kernel.generator.Visitor;
 import io.github.mosser.arduinoml.kernel.structural.Actuator;
@@ -52,11 +54,15 @@ public class GroovuinoMLModel {
 		this.binding.setVariable(name, state);
 	}
 	
-	public void createTransition(State from, State to, Sensor sensor, SIGNAL value) {
-		Transition transition = new Transition();
+	public void createSingleDigitalTransition(State from, State to, Sensor sensor, SIGNAL value) {
+		DigitalTransition transition = new DigitalTransition();
 		transition.setNext(to);
-		transition.setSensor(sensor);
-		transition.setValue(value);
+		List<DigitalCondition> conditions = new ArrayList<DigitalCondition>();
+		DigitalCondition condition = new DigitalCondition();
+		condition.setSensor(sensor);
+		condition.setValue(value);
+		transition.setConditions(conditions);
+
 		from.setTransition(transition);
 	}
 	

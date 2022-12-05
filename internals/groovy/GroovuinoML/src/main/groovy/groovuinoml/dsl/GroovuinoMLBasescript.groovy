@@ -1,6 +1,5 @@
 package main.groovy.groovuinoml.dsl
 
-import java.util.List;
 
 import io.github.mosser.arduinoml.kernel.behavioral.Action
 import io.github.mosser.arduinoml.kernel.behavioral.State
@@ -48,9 +47,9 @@ abstract class GroovuinoMLBasescript extends Script {
 		[to: { state2 -> 
 			[when: { sensor ->
 				[becomes: { signal -> 
-					((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().createTransition(
+					((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().createSingleDigitalTransition(
 						state1 instanceof String ? (State)((GroovuinoMLBinding)this.getBinding()).getVariable(state1) : (State)state1, 
-						state2 instanceof String ? (State)((GroovuinoMLBinding)this.getBinding()).getVariable(state2) : (State)state2, 
+						state2 instanceof String ? (State)((GroovuinoMLBinding)this.getBinding()).getVariable(state2) : (State)state2,
 						sensor instanceof String ? (Sensor)((GroovuinoMLBinding)this.getBinding()).getVariable(sensor) : (Sensor)sensor, 
 						signal instanceof String ? (SIGNAL)((GroovuinoMLBinding)this.getBinding()).getVariable(signal) : (SIGNAL)signal)
 				}]
