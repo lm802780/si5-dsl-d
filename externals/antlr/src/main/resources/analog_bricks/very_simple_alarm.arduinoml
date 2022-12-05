@@ -1,0 +1,17 @@
+application verySimpleAlarm
+
+# Declaring bricks
+analog sensor temp: A0
+actuator buzzer: 11
+
+
+# Declaring states
+on {
+    buzzer <= HIGH
+    temp ABOVE 19 => off
+}
+
+-> off {
+    buzzer <= LOW
+    temp BELOW 10 => on
+}

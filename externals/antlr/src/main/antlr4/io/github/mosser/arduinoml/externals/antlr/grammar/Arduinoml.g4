@@ -9,30 +9,34 @@ root            :   declaration bricks states EOF;
 
 declaration     :   'application' name=IDENTIFIER;
 
-bricks          :   (sensor|actuator)+;
+bricks          :   (sensor|analogSensor|actuator)+;
     sensor      :   'sensor'   location ;
+    analogSensor:   'analog sensor'   location ;
     actuator    :   'actuator' location ;
     location    :   id=IDENTIFIER ':' port=PORT_NUMBER;
 
 states          :   state+;
-    state       :   initial? name=IDENTIFIER '{'  (action* action*) (transition | transitionSleep | transitionCondition) '}';
+    state       :   initial? name=IDENTIFIER '{'  action* transition '}';
     action      :   actionable+ '<=' value=SIGNAL;
         actionable: receiver=IDENTIFIER;
-    transition  :   trigger=IDENTIFIER 'is' value=SIGNAL '=>' next=IDENTIFIER;
-    transitionCondition  :  trigger1=IDENTIFIER 'is' value=SIGNAL(condition)* '=>' next=IDENTIFIER;
-        condition: connector=CONNECTOR trigger=IDENTIFIER 'is' value=SIGNAL ;
-    transitionSleep      :  timeInMillis=INTEGER 'ms' '=>' next=IDENTIFIER;
+    transition: (digitalTransition|analogTransition|transitionSleep)+;
+        digitalTransition  :   (condition)* '=>' next=IDENTIFIER;
+            condition: trigger=IDENTIFIER 'is' value=SIGNAL (connector=CONNECTOR)?  ;
+        analogTransition  :   (conditionA)* '=>' next=IDENTIFIER;
+            conditionA : trigger=IDENTIFIER infsup=INFSUP value=NUMBER (connector=CONNECTOR)?;
+        transitionSleep      :  timeInMillis=NUMBER 'ms' '=>' next=IDENTIFIER;
     initial     :   '->';
 
 /*****************
  ** Lexer rules **
  *****************/
 
-PORT_NUMBER     :   [1-9] | '11' | '12';
+PORT_NUMBER     :   [1-9] | '11' | '12' | 'A0'| 'A1';
 IDENTIFIER      :   LOWERCASE (LOWERCASE|UPPERCASE)+;
 SIGNAL          :   'HIGH' | 'LOW';
 CONNECTOR       :   'AND' | 'OR';
-INTEGER         :   DIGIT+;
+INFSUP       :   'ABOVE' | 'BELOW';
+NUMBER       :   [0-9]+;
 
 /*************
  ** Helpers **
@@ -40,7 +44,6 @@ INTEGER         :   DIGIT+;
 
 fragment LOWERCASE  : [a-z];                                 // abstract rule, does not really exists
 fragment UPPERCASE  : [A-Z];
-fragment DIGIT      : ('0'..'9');
 NEWLINE             : ('\r'? '\n' | '\r')+      -> skip;
 WS                  : ((' ' | '\t')+)           -> skip;     // who cares about whitespaces?
 COMMENT             : '#' ~( '\r' | '\n' )*     -> skip;     // Single line comments, starting with a #
