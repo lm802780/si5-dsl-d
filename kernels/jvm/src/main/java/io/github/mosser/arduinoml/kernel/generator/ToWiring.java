@@ -115,7 +115,9 @@ public class ToWiring extends Visitor<StringBuffer> {
                 w("\t\tbreak;\n");
             }
         }
+
     }
+
 
     @Override
     public void visit(AnalogTransition analogTransition) {
@@ -125,9 +127,9 @@ public class ToWiring extends Visitor<StringBuffer> {
         if (context.get("pass") == PASS.TWO) {
             StringBuilder conditionBuilder = new StringBuilder();
             conditionBuilder.append("\t\t\tif(");
-            for (AnalogCondition condition : analogTransition.getConditions()) {
-                conditionBuilder.append(String.format("(analogRead(%s) == %s)", condition.getSensor().getPin(), condition.getValue()));
-                if (condition.getConnector() != null) {
+            for(AnalogCondition condition : analogTransition.getConditions()) {
+                conditionBuilder.append(String.format("(analogRead(%s) %s %s)",condition.getSensor().getPin(), condition.getInfsup().getSymbol(),condition.getValue()));
+                if(condition.getConnector() != null) {
                     conditionBuilder.append(String.format("%s ", condition.getConnector().getCondition()));
                 }
             }

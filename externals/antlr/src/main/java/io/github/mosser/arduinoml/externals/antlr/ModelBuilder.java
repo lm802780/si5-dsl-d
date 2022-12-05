@@ -10,10 +10,7 @@ import io.github.mosser.arduinoml.kernel.behavioral.condition.DigitalCondition;
 import io.github.mosser.arduinoml.kernel.behavioral.transition.AnalogTransition;
 import io.github.mosser.arduinoml.kernel.behavioral.transition.DigitalTransition;
 import io.github.mosser.arduinoml.kernel.behavioral.transition.SleepTransition;
-import io.github.mosser.arduinoml.kernel.structural.Actuator;
-import io.github.mosser.arduinoml.kernel.structural.CONNECTOR;
-import io.github.mosser.arduinoml.kernel.structural.SIGNAL;
-import io.github.mosser.arduinoml.kernel.structural.Sensor;
+import io.github.mosser.arduinoml.kernel.structural.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -180,6 +177,7 @@ public class ModelBuilder extends ArduinomlBaseListener {
             AnalogCondition condition = new AnalogCondition();
             if (conditionContext.connector != null) {
                 condition.setConnector(CONNECTOR.valueOf(conditionContext.connector.getText()));
+                condition.setInfsup(INFSUP.valueOf(conditionContext.infsup.getText()));
             }
             condition.setSensor(sensors.get(conditionContext.trigger.getText()));
             condition.setValue(Double.valueOf(conditionContext.value.getText()));
