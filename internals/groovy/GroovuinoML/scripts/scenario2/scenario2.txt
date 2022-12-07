@@ -1,5 +1,3 @@
-> sensor buttonOne on pin 9
-> sensor buttonTwo on pin 8
 // Wiring code generated from an ArduinoML model
 // Application name: dualCheckAlarm
 

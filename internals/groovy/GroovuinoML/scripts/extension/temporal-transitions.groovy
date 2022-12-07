@@ -8,7 +8,6 @@ state "on" means ledOne becomes high
 
 initial "off"
 
-from "off" to "on" when "button" becomes "high"
+from "off" to "on" when "button" becomes "high" dick
 from "on" to "off" after 800 ms
-
 export "temporalTransitions"

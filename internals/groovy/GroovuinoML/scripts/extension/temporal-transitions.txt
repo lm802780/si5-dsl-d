@@ -1,0 +1,41 @@
+// Wiring code generated from an ArduinoML model
+// Application name: temporalTransitions
+
+long debounce = 200;
+
+enum STATE {off, on};
+STATE currentState = off;
+long now = 0;
+
+boolean buttonBounceGuard = false;
+long buttonLastDebounceTime = 0;
+
+void setup(){
+  pinMode(9, INPUT);  // button [Sensor]
+  pinMode(12, OUTPUT); // ledOne [Actuator]
+}
+
+void loop() {
+	switch(currentState){
+		case off:
+			digitalWrite(12,LOW);
+			buttonBounceGuard = millis() - buttonLastDebounceTime > debounce;
+			if((digitalRead(9) == HIGH && buttonBounceGuard) ) {
+				buttonLastDebounceTime = millis();
+				currentState = on;
+				break;
+			}
+		break;
+		case on:
+			if (now == 0) {
+				now = millis();
+			}
+			digitalWrite(12,HIGH);
+			if((millis()-now > 800) ) {
+				currentState = off;
+				now = 0;
+				break;
+			}
+		break;
+	}
+}

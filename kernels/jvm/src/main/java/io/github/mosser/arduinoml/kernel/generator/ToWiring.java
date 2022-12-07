@@ -148,7 +148,7 @@ public class ToWiring extends Visitor<StringBuffer> {
                     conditionBuilder.append(String.format("(analogRead(%s) %s %s)",condition.getSensor().getPin(), ((AnalogCondition)condition).getInfsup().getSymbol(),((AnalogCondition)condition).getValue()));
 
                 }else if (condition instanceof SleepCondition){
-                    w(String.format("\t\t\tif (millis()-now > %d) {%n", ((SleepCondition) condition).getTimeInMillis()));
+                    conditionBuilder.append(String.format("(millis()-now > %d)", ((SleepCondition) condition).getTimeInMillis()));
                 }
                 conditionBuilder.append(String.format(" %s ", "&&"));
             }
@@ -162,7 +162,7 @@ public class ToWiring extends Visitor<StringBuffer> {
 
             }
             w("\t\t\t\tcurrentState = " + transition.getNext().getName() + ";\n");
-            if(transition.getConditions().contains(SleepCondition.class)){
+            if(transition.getConditions().stream().anyMatch(c -> c instanceof SleepCondition)) {
                 w("\t\t\t\tnow = 0;\n");
             }
             w("\t\t\t\tbreak;\n");

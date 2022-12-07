@@ -48,20 +48,27 @@ abstract class GroovuinoMLBasescript extends Script {
 
     // from state1 to state2 when sensor becomes signal
     def from(state1) {
+        State s1 = state1 instanceof String ? (State) ((GroovuinoMLBinding) this.getBinding()).getVariable(state1) : (State) state1;
         [to: { state2 ->
-            State s1 = state1 instanceof String ? (State) ((GroovuinoMLBinding) this.getBinding()).getVariable(state1) : (State) state1;
             State s2 = state2 instanceof String ? (State) ((GroovuinoMLBinding) this.getBinding()).getVariable(state2) : (State) state2;
             Transition transition =((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().createTransitionWithoutCondition(s1, s2) ;
-            def closure
-            closure=  { sensor ->
+            def whenClosure
+            whenClosure=  { sensor ->
                 [becomes: { signal ->
                      Sensor s = sensor instanceof String ? (Sensor) ((GroovuinoMLBinding) this.getBinding()).getVariable(sensor) : (Sensor) sensor;
                     SIGNAL sig = signal instanceof String ? (SIGNAL) ((GroovuinoMLBinding) this.getBinding()).getVariable(signal) : (SIGNAL) signal;
                     ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().addDigitalConditionToTransition(transition, s, sig) ;
-                    [and: closure]
+                    [and: whenClosure]
                 }]
             }
-            [when: closure]
+            def afterClosure
+            afterClosure = { long time ->
+                [ms:
+                    ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().addSleepConditionToTransition(transition, time)
+                ]
+
+            }
+            [when: whenClosure,after: afterClosure]
         }]
     }
 

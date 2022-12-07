@@ -6,6 +6,7 @@ import io.github.mosser.arduinoml.kernel.behavioral.Action;
 import io.github.mosser.arduinoml.kernel.behavioral.State;
 import io.github.mosser.arduinoml.kernel.behavioral.condition.Condition;
 import io.github.mosser.arduinoml.kernel.behavioral.condition.DigitalCondition;
+import io.github.mosser.arduinoml.kernel.behavioral.condition.SleepCondition;
 import io.github.mosser.arduinoml.kernel.behavioral.transition.Transition;
 import io.github.mosser.arduinoml.kernel.generator.ToWiring;
 import io.github.mosser.arduinoml.kernel.generator.Visitor;
@@ -36,7 +37,7 @@ public class GroovuinoMLModel {
         sensor.setPin(String.valueOf(pinNumber));
         this.bricks.add(sensor);
         this.binding.setVariable(name, sensor);
-		System.out.println("> sensor " + name + " on pin " + pinNumber);
+//		System.out.println("> sensor " + name + " on pin " + pinNumber);
     }
 
     public void createActuator(String name, Integer pinNumber) {
@@ -76,9 +77,13 @@ public class GroovuinoMLModel {
         conditions.add(condition);
     }
 
-    public void addSleepTransition(){
-
+    public void addSleepConditionToTransition(Transition transition, Long time){
+        List<Condition> conditions = transition.getConditions();
+        SleepCondition condition = new SleepCondition();
+        condition.setTimeInMillis(time);
+        conditions.add(condition);
     }
+
     public void setInitialState(State state) {
         this.initialState = state;
     }
