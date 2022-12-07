@@ -1,0 +1,35 @@
+// Wiring code generated from an ArduinoML model
+// Application name: handlingAnalogicalBricks
+
+long debounce = 200;
+
+enum STATE {on, off};
+STATE currentState = off;
+long now = 0;
+
+boolean tempBounceGuard = false;
+long tempLastDebounceTime = 0;
+
+void setup(){
+  pinMode(A1, INPUT);  // temp [Sensor]
+  pinMode(11, OUTPUT); // buzzer [Actuator]
+}
+
+void loop() {
+	switch(currentState){
+		case on:
+			digitalWrite(11,HIGH);
+			if((analogRead(A1) > 19.0) ) {
+				currentState = off;
+				break;
+			}
+		break;
+		case off:
+			digitalWrite(11,LOW);
+			if((analogRead(A1) < 10.0) ) {
+				currentState = on;
+				break;
+			}
+		break;
+	}
+}

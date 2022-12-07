@@ -27,13 +27,9 @@ void loop() {
 			}
 		break;
 		case on:
-			if (now == 0) {
-				now = millis();
-			}
 			digitalWrite(12,HIGH);
-			if((millis()-now > 800) ) {
+			) {
 				currentState = off;
-				now = 0;
 				break;
 			}
 		break;

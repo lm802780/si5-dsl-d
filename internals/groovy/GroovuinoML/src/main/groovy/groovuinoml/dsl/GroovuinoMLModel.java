@@ -4,16 +4,14 @@ import groovy.lang.Binding;
 import io.github.mosser.arduinoml.kernel.App;
 import io.github.mosser.arduinoml.kernel.behavioral.Action;
 import io.github.mosser.arduinoml.kernel.behavioral.State;
+import io.github.mosser.arduinoml.kernel.behavioral.condition.AnalogCondition;
 import io.github.mosser.arduinoml.kernel.behavioral.condition.Condition;
 import io.github.mosser.arduinoml.kernel.behavioral.condition.DigitalCondition;
 import io.github.mosser.arduinoml.kernel.behavioral.condition.SleepCondition;
 import io.github.mosser.arduinoml.kernel.behavioral.transition.Transition;
 import io.github.mosser.arduinoml.kernel.generator.ToWiring;
 import io.github.mosser.arduinoml.kernel.generator.Visitor;
-import io.github.mosser.arduinoml.kernel.structural.Actuator;
-import io.github.mosser.arduinoml.kernel.structural.Brick;
-import io.github.mosser.arduinoml.kernel.structural.SIGNAL;
-import io.github.mosser.arduinoml.kernel.structural.Sensor;
+import io.github.mosser.arduinoml.kernel.structural.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,10 +29,10 @@ public class GroovuinoMLModel {
         this.binding = binding;
     }
 
-    public void createSensor(String name, Integer pinNumber) {
+    public void createSensor(String name, String pinNumber) {
         Sensor sensor = new Sensor();
         sensor.setName(name);
-        sensor.setPin(String.valueOf(pinNumber));
+        sensor.setPin(pinNumber);
         this.bricks.add(sensor);
         this.binding.setVariable(name, sensor);
 //		System.out.println("> sensor " + name + " on pin " + pinNumber);
@@ -76,6 +74,15 @@ public class GroovuinoMLModel {
         condition.setValue(value);
         conditions.add(condition);
     }
+    public void addAnalogConditionToTransition(Transition transition,Sensor sensor, INFSUP infsup,double value) {
+        List<Condition> conditions = transition.getConditions();
+        AnalogCondition analogCondition = new AnalogCondition();
+        analogCondition.setSensor(sensor);
+        analogCondition.setInfsup(infsup);
+        analogCondition.setValue(value);
+        conditions.add(analogCondition);
+    }
+
 
     public void addSleepConditionToTransition(Transition transition, Long time){
         List<Condition> conditions = transition.getConditions();

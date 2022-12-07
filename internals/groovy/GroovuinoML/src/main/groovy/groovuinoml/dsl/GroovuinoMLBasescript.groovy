@@ -4,6 +4,7 @@ import io.github.mosser.arduinoml.kernel.behavioral.Action
 import io.github.mosser.arduinoml.kernel.behavioral.State
 import io.github.mosser.arduinoml.kernel.behavioral.transition.Transition
 import io.github.mosser.arduinoml.kernel.structural.Actuator
+import io.github.mosser.arduinoml.kernel.structural.INFSUP
 import io.github.mosser.arduinoml.kernel.structural.SIGNAL
 import io.github.mosser.arduinoml.kernel.structural.Sensor
 
@@ -14,10 +15,12 @@ import java.awt.datatransfer.StringSelection
 abstract class GroovuinoMLBasescript extends Script {
     // sensor "name" pin n
     def sensor(String name) {
-        [pin  : { Integer n -> ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().createSensor(name, n) },
-         onPin: { Integer n -> ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().createSensor(name, n) }]
+        [pin  : { Integer n -> ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().createSensor(name, String.valueOf(n)) },
+         onPin: { Integer n -> ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().createSensor(name, String.valueOf(n)) }]
     }
-
+    def analog_sensor(String name) {
+        [pin  : { String pin -> ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().createSensor(name, pin) }]
+    }
     // actuator "name" pin n
     def actuator(String name) {
         [pin: { Integer n -> ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().createActuator(name, n) }]
@@ -54,12 +57,21 @@ abstract class GroovuinoMLBasescript extends Script {
             Transition transition =((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().createTransitionWithoutCondition(s1, s2) ;
             def whenClosure
             whenClosure=  { sensor ->
-                [becomes: { signal ->
-                     Sensor s = sensor instanceof String ? (Sensor) ((GroovuinoMLBinding) this.getBinding()).getVariable(sensor) : (Sensor) sensor;
+                Sensor s = sensor instanceof String ? (Sensor) ((GroovuinoMLBinding) this.getBinding()).getVariable(sensor) : (Sensor) sensor;
+                def becomesClosure ={ signal ->
                     SIGNAL sig = signal instanceof String ? (SIGNAL) ((GroovuinoMLBinding) this.getBinding()).getVariable(signal) : (SIGNAL) signal;
                     ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().addDigitalConditionToTransition(transition, s, sig) ;
                     [and: whenClosure]
-                }]
+                }
+                def aboveClosure ={  double n ->
+                    ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().addAnalogConditionToTransition(transition, s,INFSUP.ABOVE, n) ;
+                    [and: whenClosure]
+                }
+                def belowClosure ={ double n ->
+                    ((GroovuinoMLBinding) this.getBinding()).getGroovuinoMLModel().addAnalogConditionToTransition(transition, s, INFSUP.BELOW, n) ;
+                    [and: whenClosure]
+                }
+                [becomes: becomesClosure, above: aboveClosure, below: belowClosure]
             }
             def afterClosure
             afterClosure = { long time ->
