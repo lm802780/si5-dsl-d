@@ -1,3 +1,5 @@
+> sensor buttonOne on pin 9
+> sensor buttonTwo on pin 8
 // Wiring code generated from an ArduinoML model
 // Application name: dualCheckAlarm
 
@@ -27,11 +29,13 @@ void loop() {
 			if((digitalRead(9) == LOW && buttonOneBounceGuard) ) {
 				buttonOneLastDebounceTime = millis();
 				currentState = off;
+				break;
 			}
 			buttonTwoBounceGuard = millis() - buttonTwoLastDebounceTime > debounce;
 			if((digitalRead(8) == LOW && buttonTwoBounceGuard) ) {
 				buttonTwoLastDebounceTime = millis();
 				currentState = off;
+				break;
 			}
 		break;
 		case off:
@@ -42,6 +46,7 @@ void loop() {
 				buttonTwoLastDebounceTime = millis();
 				buttonOneLastDebounceTime = millis();
 				currentState = on;
+				break;
 			}
 		break;
 	}

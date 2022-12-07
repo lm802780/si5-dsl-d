@@ -3,11 +3,9 @@ package io.github.mosser.arduinoml.kernel.behavioral.condition;
 import io.github.mosser.arduinoml.kernel.structural.CONNECTOR;
 import io.github.mosser.arduinoml.kernel.structural.Sensor;
 
-public class Condition {
+public abstract class Condition {
 
 	private Sensor sensor;
-
-
 
 	public Sensor getSensor() {
 		return sensor;
