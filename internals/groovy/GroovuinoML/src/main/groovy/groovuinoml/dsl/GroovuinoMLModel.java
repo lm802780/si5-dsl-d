@@ -36,7 +36,7 @@ public class GroovuinoMLModel {
         sensor.setPin(String.valueOf(pinNumber));
         this.bricks.add(sensor);
         this.binding.setVariable(name, sensor);
-//		System.out.println("> sensor " + name + " on pin " + pinNumber);
+		System.out.println("> sensor " + name + " on pin " + pinNumber);
     }
 
     public void createActuator(String name, Integer pinNumber) {
@@ -69,7 +69,6 @@ public class GroovuinoMLModel {
     }
 
     public void addDigitalConditionToTransition(Transition transition, Sensor sensor, SIGNAL value) {
-
         List<Condition> conditions = transition.getConditions();
         DigitalCondition condition = new DigitalCondition();
         condition.setSensor(sensor);
@@ -77,6 +76,9 @@ public class GroovuinoMLModel {
         conditions.add(condition);
     }
 
+    public void addSleepTransition(){
+
+    }
     public void setInitialState(State state) {
         this.initialState = state;
     }
