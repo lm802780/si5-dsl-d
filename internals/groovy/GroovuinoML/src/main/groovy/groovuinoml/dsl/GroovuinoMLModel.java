@@ -11,7 +11,11 @@ import io.github.mosser.arduinoml.kernel.behavioral.condition.SleepCondition;
 import io.github.mosser.arduinoml.kernel.behavioral.transition.Transition;
 import io.github.mosser.arduinoml.kernel.generator.ToWiring;
 import io.github.mosser.arduinoml.kernel.generator.Visitor;
-import io.github.mosser.arduinoml.kernel.structural.*;
+import io.github.mosser.arduinoml.kernel.structural.Actuator;
+import io.github.mosser.arduinoml.kernel.structural.Brick;
+import io.github.mosser.arduinoml.kernel.structural.INFSUP;
+import io.github.mosser.arduinoml.kernel.structural.SIGNAL;
+import io.github.mosser.arduinoml.kernel.structural.Sensor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +39,6 @@ public class GroovuinoMLModel {
         sensor.setPin(pinNumber);
         this.bricks.add(sensor);
         this.binding.setVariable(name, sensor);
-//		System.out.println("> sensor " + name + " on pin " + pinNumber);
     }
 
     public void createActuator(String name, Integer pinNumber) {
@@ -56,11 +59,11 @@ public class GroovuinoMLModel {
 
     public Transition createTransitionWithoutCondition(State from, State to) {
         Transition transition = new Transition();
-        if(transition.getConditions() == null) {
+        if (transition.getConditions() == null) {
             transition.setConditions(new ArrayList<>());
         }
         transition.setNext(to);
-        if(from.getTransitions() == null) {
+        if (from.getTransitions() == null) {
             from.setTransitions(new ArrayList<>());
         }
         from.addTransition(transition);
@@ -74,7 +77,8 @@ public class GroovuinoMLModel {
         condition.setValue(value);
         conditions.add(condition);
     }
-    public void addAnalogConditionToTransition(Transition transition,Sensor sensor, INFSUP infsup,double value) {
+
+    public void addAnalogConditionToTransition(Transition transition, Sensor sensor, INFSUP infsup, double value) {
         List<Condition> conditions = transition.getConditions();
         AnalogCondition analogCondition = new AnalogCondition();
         analogCondition.setSensor(sensor);
@@ -84,7 +88,7 @@ public class GroovuinoMLModel {
     }
 
 
-    public void addSleepConditionToTransition(Transition transition, Long time){
+    public void addSleepConditionToTransition(Transition transition, Long time) {
         List<Condition> conditions = transition.getConditions();
         SleepCondition condition = new SleepCondition();
         condition.setTimeInMillis(time);

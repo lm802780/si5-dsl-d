@@ -34,7 +34,7 @@ states          :   state+;
 PORT_NUMBER     :   [1-9] | '11' | '12' | 'A0'| 'A1';
 IDENTIFIER      :   LOWERCASE (LOWERCASE|UPPERCASE)+;
 SIGNAL          :   'HIGH' | 'LOW';
-CONNECTOR       :   'AND' | 'OR';
+CONNECTOR       :   'AND';
 INFSUP       :   'ABOVE' | 'BELOW';
 NUMBER       :   [0-9]+;
 

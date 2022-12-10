@@ -17,8 +17,10 @@ import io.github.mosser.arduinoml.kernel.structural.Sensor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ModelBuilder extends ArduinomlBaseListener {
 
@@ -43,7 +45,13 @@ public class ModelBuilder extends ArduinomlBaseListener {
     private final Map<String, Sensor> sensors = new HashMap<>();
     private final Map<String, Actuator> actuators = new HashMap<>();
     private final Map<String, State> states = new HashMap<>();
-    private final Map<String, Binding> bindings = new HashMap<>();
+    private final Map<String, Set<Binding>> bindings = new HashMap<>();
+
+    private void addBiding(String key, Binding binding) {
+        Set<Binding> bindingsSource = (bindings.get(key) == null ? new HashSet<>() : new HashSet<>(bindings.get(key)));
+        bindingsSource.add(binding);
+        bindings.put(key, bindingsSource);
+    }
 
     /**
      * Used to support state resolution for transitions.
@@ -54,8 +62,8 @@ public class ModelBuilder extends ArduinomlBaseListener {
          */
         protected String to;
         protected Long timeInMillis;
-        List<DigitalCondition> digitalConditions = new ArrayList<>();
-        List<AnalogCondition> analogConditions = new ArrayList<>();
+        protected List<Condition> digitalConditions = new ArrayList<>();
+        protected List<Condition> analogConditions = new ArrayList<>();
     }
 
     private State currentState;
@@ -73,25 +81,29 @@ public class ModelBuilder extends ArduinomlBaseListener {
     @Override
     public void exitRoot(ArduinomlParser.RootContext ctx) {
         // Resolving states in transitions
-        bindings.forEach((key, binding) -> {
-            if (binding.timeInMillis != null) {
-                // Sleep transition
-                SleepTransition t = new SleepTransition();
-                t.setTimeInMillis(binding.timeInMillis);
-                t.setNext(states.get(binding.to));
-                states.get(key).setTransition(t);
-            } else if (!binding.digitalConditions.isEmpty()) {
-                // Digital transition
-                DigitalTransition t = new DigitalTransition();
-                t.setConditions(binding.digitalConditions);
-                t.setNext(states.get(binding.to));
-                states.get(key).setTransition(t);
-            } else {
-                // Analog transition
-                AnalogTransition t = new AnalogTransition();
-                t.setConditions(binding.analogConditions);
-                t.setNext(states.get(binding.to));
-                states.get(key).setTransition(t);
+        bindings.forEach((key, bindingList) -> {
+            for (Binding binding : bindingList) {
+                Transition transition = new Transition();
+
+                if (binding.timeInMillis != null) {
+                    // Sleep transition
+                    SleepCondition sleepCondition = new SleepCondition();
+                    sleepCondition.setTimeInMillis(binding.timeInMillis);
+                    transition.setConditions(List.of(sleepCondition));
+                } else if (!binding.digitalConditions.isEmpty()) {
+                    // Digital transition
+                    transition.getConditions().addAll(binding.digitalConditions);
+                } else {
+                    // Analog transition
+                    transition.getConditions().addAll(binding.analogConditions);
+                }
+
+                // Add transition
+                transition.setNext(states.get(binding.to));
+                if (transition.getNext() != null) {
+                    System.out.println("transition = " + transition);
+                    states.get(key).getTransitions().add(transition);
+                }
             }
         });
         this.built = true;
@@ -160,15 +172,13 @@ public class ModelBuilder extends ArduinomlBaseListener {
         toBeResolvedLater.to = ctx.next.getText();
         ctx.condition().forEach(conditionContext -> {
             DigitalCondition condition = new DigitalCondition();
-            if (conditionContext.connector != null) {
-                condition.setConnector(CONNECTOR.valueOf(conditionContext.connector.getText()));
-            }
             condition.setSensor(sensors.get(conditionContext.trigger.getText()));
             condition.setValue(SIGNAL.valueOf(conditionContext.value.getText()));
             toBeResolvedLater.digitalConditions.add(condition);
+
+            toBeResolvedLater.to = ctx.next.getText();
+            addBiding(currentState.getName(), toBeResolvedLater);
         });
-        toBeResolvedLater.to = ctx.next.getText();
-        bindings.put(currentState.getName(), toBeResolvedLater);
     }
 
     @Override
@@ -178,16 +188,14 @@ public class ModelBuilder extends ArduinomlBaseListener {
         toBeResolvedLater.to = ctx.next.getText();
         ctx.conditionA().forEach(conditionContext -> {
             AnalogCondition condition = new AnalogCondition();
-            if (conditionContext.connector != null) {
-                condition.setConnector(CONNECTOR.valueOf(conditionContext.connector.getText()));
-            }
             condition.setSensor(sensors.get(conditionContext.trigger.getText()));
             condition.setValue(Double.valueOf(conditionContext.value.getText()));
             condition.setInfsup(INFSUP.valueOf(conditionContext.infsup.getText()));
             toBeResolvedLater.analogConditions.add(condition);
+
+            toBeResolvedLater.to = ctx.next.getText();
+            addBiding(currentState.getName(), toBeResolvedLater);
         });
-        toBeResolvedLater.to = ctx.next.getText();
-        bindings.put(currentState.getName(), toBeResolvedLater);
     }
 
     @Override
@@ -196,7 +204,7 @@ public class ModelBuilder extends ArduinomlBaseListener {
         Binding toBeResolvedLater = new Binding();
         toBeResolvedLater.to = ctx.next.getText();
         toBeResolvedLater.timeInMillis = Long.valueOf(ctx.timeInMillis.getText());
-        bindings.put(currentState.getName(), toBeResolvedLater);
+        addBiding(currentState.getName(), toBeResolvedLater);
     }
 
     @Override

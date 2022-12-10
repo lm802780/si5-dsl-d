@@ -1,5 +1,3 @@
-//temporal transitions
-
 sensor "button" pin 9
 actuator "ledOne" pin 12
 
@@ -9,5 +7,6 @@ state "on" means ledOne becomes high
 initial "off"
 
 from "off" to "on" when "button" becomes "high"
-from "on" to "off" after 800 ff
+from "on" to "off" after 800 ms
+
 export "temporalTransitions"
