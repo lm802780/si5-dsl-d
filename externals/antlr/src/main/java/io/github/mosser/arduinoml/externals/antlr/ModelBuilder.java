@@ -6,11 +6,14 @@ import io.github.mosser.arduinoml.kernel.App;
 import io.github.mosser.arduinoml.kernel.behavioral.Action;
 import io.github.mosser.arduinoml.kernel.behavioral.State;
 import io.github.mosser.arduinoml.kernel.behavioral.condition.AnalogCondition;
+import io.github.mosser.arduinoml.kernel.behavioral.condition.Condition;
 import io.github.mosser.arduinoml.kernel.behavioral.condition.DigitalCondition;
-import io.github.mosser.arduinoml.kernel.behavioral.transition.AnalogTransition;
-import io.github.mosser.arduinoml.kernel.behavioral.transition.DigitalTransition;
-import io.github.mosser.arduinoml.kernel.behavioral.transition.SleepTransition;
-import io.github.mosser.arduinoml.kernel.structural.*;
+import io.github.mosser.arduinoml.kernel.behavioral.condition.SleepCondition;
+import io.github.mosser.arduinoml.kernel.behavioral.transition.Transition;
+import io.github.mosser.arduinoml.kernel.structural.Actuator;
+import io.github.mosser.arduinoml.kernel.structural.INFSUP;
+import io.github.mosser.arduinoml.kernel.structural.SIGNAL;
+import io.github.mosser.arduinoml.kernel.structural.Sensor;
 
 import java.util.ArrayList;
 import java.util.HashMap;

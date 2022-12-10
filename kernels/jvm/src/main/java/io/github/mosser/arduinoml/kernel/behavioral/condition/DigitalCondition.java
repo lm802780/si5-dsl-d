@@ -4,13 +4,13 @@ import io.github.mosser.arduinoml.kernel.structural.SIGNAL;
 
 public class DigitalCondition extends Condition {
 
-	private SIGNAL value;
+    private SIGNAL value;
 
-	public SIGNAL getValue() {
-		return value;
-	}
+    public SIGNAL getValue() {
+        return value;
+    }
 
-	public void setValue(SIGNAL value) {
-		this.value = value;
-	}
+    public void setValue(SIGNAL value) {
+        this.value = value;
+    }
 }

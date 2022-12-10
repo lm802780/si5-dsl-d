@@ -10,5 +10,4 @@ public class SleepCondition extends Condition {
     public void setTimeInMillis(Long timeInMillis) {
         this.timeInMillis = timeInMillis;
     }
-
 }
