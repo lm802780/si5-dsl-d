@@ -1,4 +1,5 @@
 import re
+import sys
 import glob
 
 from typing import List, Dict, Any
@@ -133,16 +134,7 @@ def application_validator(lines: List[str], result: ParserResultType):
     return lines[i:], i + 1, result
 
 
-for filepath in glob.glob('validator/exemple/valid/*'):
-    print("File: ", filepath)
-    with open(filepath) as f:
-        events = states_validator(*bricks_validator(*application_validator(f.readlines(), [])))
-        for event in events:
-            print(f"{('error' if 'error' in event else 'warning').upper()} l.{event['line']}: {event['error'] if 'error' in event else event['warning']}")
-            if 'error' in event:
-                break
-
-for filepath in glob.glob('validator/exemple/invalid/*'):
+for filepath in glob.glob(sys.argv[1]):
     print("File: ", filepath)
     with open(filepath) as f:
         events = states_validator(*bricks_validator(*application_validator(f.readlines(), [])))
