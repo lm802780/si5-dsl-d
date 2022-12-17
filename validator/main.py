@@ -68,10 +68,11 @@ def state_block_validator(block_lines: List[str], line_index: int, result: Parse
 def states_validator(lines: List[str], line_index: int, result: ParserResultType, bricks: BrickType):
     is_inside_block = False
     blocks_indexes = []
+    last_was_blank = False
     for i, line in enumerate(lines, start=line_index):
         if line.strip().endswith('{'):
             if len(blocks_indexes) % 2 != 0:
-                result.append({'line': i, 'error': f"Invalid block opening token in line {i}. Close the block declared in line {blocks_indexes[-1] + 1} first."})
+                result.append({'line': i, 'error': f"Invalid block opening token in line {i}. Close the block declared in line {blocks_indexes[-1] + line_index} first."})
                 return result
             blocks_indexes.append(i - line_index)
         elif line.strip().endswith('}'):
@@ -79,8 +80,19 @@ def states_validator(lines: List[str], line_index: int, result: ParserResultType
                 result.append({'line': i, 'error': f"Invalid block closing token in line {i}."})
                 return result
             blocks_indexes.append(i - line_index)
-        else:
+        elif not line.split():
+            if last_was_blank:
+                result.append({'line': i, 'warning': "Unecessary blank line."})
+            else:
+                last_was_blank = True
             continue
+        elif len(blocks_indexes) % 2 == 0:
+            result.append({'line': i, 'error': f"Invalid token in line {line.strip()}."})
+            return result
+        else:
+            last_was_blank = False
+            continue
+        last_was_blank = False
     if not blocks_indexes:
         result.append({'line': i, 'error': f"Missing a transition block."})
         return result
@@ -101,7 +113,7 @@ def bricks_validator(lines: List[str], line_index: int, result: ParserResultType
         if line.strip() == "# Declaring bricks":
             is_inside_bricks_block = True
         elif line.strip() == "# Declaring states":
-            return lines[i - 1:], i, result, bricks
+            return lines[i - line_index + 1:], i + 1, result, bricks
         elif is_inside_bricks_block:
             if not line.strip() and last_was_blank:
                 result.append({'line': i, 'warning': "Unecessary blank line."})
@@ -122,6 +134,7 @@ def bricks_validator(lines: List[str], line_index: int, result: ParserResultType
         else:
             result.append({'line': i, 'error': f"Invalid token {line.strip()[0]}."})
             return lines[i:], i + 1, result, bricks
+        last_was_blank = False
     return lines[i:], i + 1, result, bricks
 
 
