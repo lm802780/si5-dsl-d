@@ -95,17 +95,19 @@ def states_validator(lines: List[str], line_index: int, result: ParserResultType
 def bricks_validator(lines: List[str], line_index: int, result: ParserResultType):
     brick_regex = re.compile('(\w+) (\w+): (\d{1,2})')
     is_inside_bricks_block = False
+    last_was_blank = False
     bricks = {}
     for i, line in enumerate(lines, start=line_index):
         if line.strip() == "# Declaring bricks":
             is_inside_bricks_block = True
-        elif not line.strip():
-            continue
         elif line.strip() == "# Declaring states":
             return lines[i - 1:], i, result, bricks
         elif is_inside_bricks_block:
-            if not line.strip():
+            if not line.strip() and last_was_blank:
                 result.append({'line': i, 'warning': "Unecessary blank line."})
+                continue
+            elif not line.strip():
+                last_was_blank = True
                 continue
             m = brick_regex.match(line)
             if not m:
@@ -115,6 +117,8 @@ def bricks_validator(lines: List[str], line_index: int, result: ParserResultType
                 result.append({'line': i, 'error': f"Invalid brick {m.group(1)}. Should be one of the following: {valid_as_brick}"})
                 return lines[i:], i + 1, result, bricks
             bricks[m.group(2)] = {'type': m.group(1), 'value': m.group(3)}
+        elif not line.strip():
+            continue
         else:
             result.append({'line': i, 'error': f"Invalid token {line.strip()[0]}."})
             return lines[i:], i + 1, result, bricks
